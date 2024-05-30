@@ -1,0 +1,93 @@
+<Project>
+	<PropertyGroup>
+		<OutputPath>$(MSBuildThisFileDirectory)\bin\$(Configuration)\</OutputPath>
+	</PropertyGroup>
+
+	<Target Name="GeneratedMetaDataClass" BeforeTargets="BeforeCompile;CoreCompile" Inputs="$(MSBuildAllProjects)" Outputs="$(IntermediateOutputPath)GeneratedMetaDataClass.cs">
+			<PropertyGroup>
+				<NwPluginGuid Condition="'$(PluginGuid)' == ''">$(AssemblyName)</NwPluginGuid>
+				<NwPluginName Condition="'$(PluginName)' == ''">$(Product)</NwPluginName>
+				<NwPluginAuthors Condition="'$(PluginAuthors)' == ''">$(Authors)</NwPluginAuthors>
+				<NwPluginVersion Condition="'$(PluginVersion)' == ''">$(Version)</NwPluginVersion>
+				<NwPluginDescription Condition="'$(PluginDescription)' == ''">$(Description)</NwPluginDescription>
+
+				<GeneratedMetaDataClass>
+					<![CDATA[
+	global using global::System%3B
+	global using global::System.Diagnostics%3B
+	global using global::HarmonyLib%3B
+	global using global::System.Collections.Generic%3B
+	global using global::System.Linq%3B
+	global using global::UnityEngine%3B
+
+	global using global::Exiled.API.Enums%3B
+	global using global::Exiled.API.Features%3B
+	global using global::Exiled.Loader%3B
+	global using global::Exiled.API.Interfaces%3B
+
+	global using global::Exiled.Events.EventArgs.Player%3B
+	global using global::Exiled.Events.EventArgs.Cassie%3B
+	global using global::Exiled.Events.EventArgs.Interfaces%3B
+	global using global::Exiled.Events.EventArgs.Item%3B
+	global using global::Exiled.Events.EventArgs.Map%3B
+	global using global::Exiled.Events.EventArgs.Scp049%3B
+	global using global::Exiled.Events.EventArgs.Scp0492%3B
+	global using global::Exiled.Events.EventArgs.Scp079%3B
+	global using global::Exiled.Events.EventArgs.Scp096%3B
+	global using global::Exiled.Events.EventArgs.Scp106%3B
+	global using global::Exiled.Events.EventArgs.Scp173%3B
+	global using global::Exiled.Events.EventArgs.Scp244%3B
+	global using global::Exiled.Events.EventArgs.Scp3114%3B
+	global using global::Exiled.Events.EventArgs.Scp330%3B
+	global using global::Exiled.Events.EventArgs.Scp914%3B
+	global using global::Exiled.Events.EventArgs.Scp939%3B
+	global using global::Exiled.Events.EventArgs.Server%3B
+	global using global::Exiled.Events.EventArgs.Warhead%3B
+
+	
+	global using PlayerEvents = global::Exiled.Events.Handlers.Player%3B
+	global using ServerEvents = global::Exiled.Events.Handlers.Server%3B
+	global using MapEvents = global::Exiled.Events.Handlers.Map%3B
+	global using CassieEvents = global::Exiled.Events.Handlers.Cassie%3B
+	global using ItemEvents = global::Exiled.Events.Handlers.Item%3B
+	global using Scp049Events = global::Exiled.Events.Handlers.Scp049%3B
+	global using Scp0492Events = global::Exiled.Events.Handlers.Scp0492%3B
+	global using Scp079Events = global::Exiled.Events.Handlers.Scp079%3B
+	global using Scp096Events = global::Exiled.Events.Handlers.Scp096%3B
+	global using Scp106Events = global::Exiled.Events.Handlers.Scp106%3B
+	global using Scp173Events = global::Exiled.Events.Handlers.Scp173%3B
+	global using Scp244Events = global::Exiled.Events.Handlers.Scp244%3B
+	global using Scp3114Events = global::Exiled.Events.Handlers.Scp3114%3B
+	global using Scp330Events = global::Exiled.Events.Handlers.Scp330%3B
+	global using Scp914Events = global::Exiled.Events.Handlers.Scp914%3B
+	global using Scp939Events = global::Exiled.Events.Handlers.Scp939%3B
+	global using WarheadEvents = global::Exiled.Events.Handlers.Warhead%3B
+
+	namespace $(RootNamespace)%3B
+
+	internal static class PluginInfo
+	{
+		public const string PLUGIN_GUID = "$(NwPluginGuid)"%3B
+		public const string PLUGIN_NAME = "$(NwPluginName)"%3B
+		public const string PLUGIN_AUTHORS = "$(NwPluginAuthors)"%3B
+		public const string PLUGIN_VERSION = "$(NwPluginVersion)"%3B
+		public const string PLUGIN_DESCRIPTION = "$(NwPluginDescription)"%3B
+	}
+			]]>
+				</GeneratedMetaDataClass>
+				<GeneratedFilePath>$(IntermediateOutputPath)PluginInfo.cs</GeneratedFilePath>
+			</PropertyGroup>
+
+			<ItemGroup>
+				<Compile Include="$(GeneratedFilePath)" />
+				<FileWrites Include="$(GeneratedFilePath)" />
+			</ItemGroup>
+
+			<WriteLinesToFile Lines="$(GeneratedMetaDataClass)" File="$(GeneratedFilePath)" WriteOnlyWhenDifferent="true" Overwrite="true" />
+		</Target>
+
+		<ItemGroup>
+			<PackageReference Include="EXILED" Version="8.7.0" />
+			<PackageReference Include="Lib.Harmony" Version="2.2.2" />
+	</ItemGroup>
+</Project>

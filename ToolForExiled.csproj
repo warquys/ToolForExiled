@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Title>ToolForExiled</Title>
+		<AssemblyName>$(Title)</AssemblyName>
+		<Product>Tool For Exiled</Product>
+		<Version>1.1.0</Version>
+		<RepositoryUrl>https://github.com/warquys/OneZeroPlugins</RepositoryUrl>
+
+		<Authors>VT</Authors>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+
+		<TargetFramework>net481</TargetFramework>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<LangVersion>latest</LangVersion>
+		<DebugType>embedded</DebugType>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<Configurations>Debug;Release;UncomplicatedRoleSupported_Release;UncomplicatedRoleSupported_Debug</Configurations>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Reference Include="Assembly-CSharp-firstpass" HintPath="$(SL_REFERENCES)\Assembly-CSharp-firstpass.dll" />
+		<Reference Include="CommandSystem.Core" HintPath="$(SL_REFERENCES)\CommandSystem.Core.dll" />
+		<Reference Include="Mirror" HintPath="$(SL_REFERENCES)\Mirror.dll" />
+		<Reference Include="Pooling" HintPath="$(SL_REFERENCES)\Pooling.dll" />
+		<Reference Include="UnityEngine.PhysicsModule" HintPath="$(SL_REFERENCES)\UnityEngine.PhysicsModule.dll" />
+		<Reference Include="UnityEngine.CoreModule" HintPath="$(SL_REFERENCES)\UnityEngine.CoreModule.dll" />
+
+		<Reference Include="UncomplicatedCustomRoles" HintPath="..\Ref\UncomplicatedCustomRoles.dll" Condition="$(DefineConstants.Contains(UNCOMPLICATED_ROLE_SUPPORTED))" />
+	</ItemGroup>
+
+	<Import Project="..\global.props" />
+
+	<ItemGroup>
+		<PackageReference Update="EXILED" Version="8.9.2" />
+	</ItemGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UncomplicatedRoleSupported_Release|AnyCPU'">
+		<DefineConstants>$(DefineConstants);UNCOMPLICATED_ROLE_SUPPORTED</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UncomplicatedRoleSupported_Debug|AnyCPU'">
+		<DefineConstants>$(DefineConstants);UNCOMPLICATED_ROLE_SUPPORTED;DEBUG</DefineConstants>
+	</PropertyGroup>
+
+
+
+</Project>
