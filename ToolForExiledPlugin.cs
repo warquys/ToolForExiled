@@ -98,18 +98,21 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
 
     public void CassieConvertRoleName(Player player, out string withoutSpace, out string withSpace)
     {
-        if (player.IsScp)
-        {
-            ConvertSCP(player.Role.Type, out withoutSpace, out withSpace);
-            return;
-        }
-
         var hasCustomRole = player.HasCustomRole();
-        var name = Translation.RoleName.FirstOrDefault(p => p.Key.IsValid(player, hasCustomRole)).Value;
-        if (name != null)
+        if (hasCustomRole) 
         {
-            name.Deconstruct(out withSpace, out withoutSpace);
-            return;
+            var name = Translation.RoleName.FirstOrDefault(p => p.Key.IsValid(player, hasCustomRole)).Value;
+            if (name != null)
+            {
+                name.Deconstruct(out withSpace, out withoutSpace);
+                return;
+            }
+
+            if (player.IsScp)
+            {
+                ConvertSCP(player.Role.Type, out withoutSpace, out withSpace);
+                return;
+            }
         }
 
         withoutSpace = "";
