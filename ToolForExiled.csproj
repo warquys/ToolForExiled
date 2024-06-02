@@ -4,7 +4,7 @@
 		<Title>ToolForExiled</Title>
 		<AssemblyName>$(Title)</AssemblyName>
 		<Product>Tool For Exiled</Product>
-		<Version>1.1.0</Version>
+		<Version>1.2.0</Version>
 		<RepositoryUrl>https://github.com/warquys/OneZeroPlugins</RepositoryUrl>
 
 		<Authors>VT</Authors>
@@ -15,7 +15,7 @@
 		<LangVersion>latest</LangVersion>
 		<DebugType>embedded</DebugType>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-		<Configurations>Debug;Release;UncomplicatedRoleSupported_Release;UncomplicatedRoleSupported_Debug</Configurations>
+		<Configurations>Debug;Release;UncomplicatedRoleSupported_Release;UncomplicatedRoleSupported_Debug;SoundSupported_Release;SoundSupported_Debug;UncomplicatedRoleAndSoundSupported_Release;UncomplicatedRoleAndSoundSupported_Debug</Configurations>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -27,6 +27,10 @@
 		<Reference Include="UnityEngine.CoreModule" HintPath="$(SL_REFERENCES)\UnityEngine.CoreModule.dll" />
 
 		<Reference Include="UncomplicatedCustomRoles" HintPath="..\Ref\UncomplicatedCustomRoles.dll" Condition="$(DefineConstants.Contains(UNCOMPLICATED_ROLE_SUPPORTED))" />
+		<Reference Include="AudioPlayer" HintPath="..\Ref\AudioPlayer.dll" Condition="$(DefineConstants.Contains(SOUND_API_SUPPORTED))" />
+		<Reference Include="NVorbis" HintPath="..\Ref\NVorbis.dll" Condition="$(DefineConstants.Contains(SOUND_API_SUPPORTED))" />
+		<Reference Include="SCPSLAudioApi" HintPath="..\Ref\SCPSLAudioApi.dll" Condition="$(DefineConstants.Contains(SOUND_API_SUPPORTED))" />
+
 	</ItemGroup>
 
 	<Import Project="..\global.props" />
@@ -43,6 +47,22 @@
 		<DefineConstants>$(DefineConstants);UNCOMPLICATED_ROLE_SUPPORTED;DEBUG</DefineConstants>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='SoundSupported_Release|AnyCPU'">
+		<DefineConstants>$(DefineConstants);SOUND_API_SUPPORTED</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='SoundSupported_Debug|AnyCPU'">
+		<DefineConstants>$(DefineConstants);SOUND_API_SUPPORTED;DEBUG</DefineConstants>
+	</PropertyGroup>
+
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UncomplicatedRoleAndSoundSupported_Release|AnyCPU'">
+		<DefineConstants>$(DefineConstants);UNCOMPLICATED_ROLE_SUPPORTED;SOUND_API_SUPPORTED</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UncomplicatedRoleAndSoundSupported_Debug|AnyCPU'">
+		<DefineConstants>$(DefineConstants);UNCOMPLICATED_ROLE_SUPPORTED;SOUND_API_SUPPORTED;DEBUG</DefineConstants>
+	</PropertyGroup>
 
 
 </Project>

@@ -1,4 +1,7 @@
-﻿using CommandSystem;
+﻿#if SOUND_API_SUPPORTED
+using AudioPlayer.API;
+#endif
+using CommandSystem;
 using Exiled.API.Extensions;
 using Exiled.API.Features.Roles;
 using MEC;
@@ -10,6 +13,8 @@ namespace ToolForExiled;
 
 public class ToolForExiledPlugin : Plugin<Config, Translation>
 {
+    public const int IdForAudio = 840;
+
     public const string CommandConfigPermission = "ConfigHelp";
 
     public const string RoundRest_CoroutineTag = "kill_at_rest_(waitinforplayer)";
@@ -56,8 +61,13 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
         Restables.ForEach(p => p.Reset());
     }
 
-    public void TryCassie(string message, string translation)
+    public void TryCassie(string message, string translation, string soungMessage)
     {
+#if SOUND_API_SUPPORTED
+        if (!string.IsNullOrEmpty(soungMessage))
+            AudioController.PlayAudioFromFile(soungMessage, id: IdForAudio);
+#endif
+
         if (!string.IsNullOrEmpty(message))
         {
             if (!string.IsNullOrEmpty(translation))
