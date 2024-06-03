@@ -27,9 +27,7 @@
 		<Reference Include="UnityEngine.CoreModule" HintPath="$(SL_REFERENCES)\UnityEngine.CoreModule.dll" />
 
 		<Reference Include="UncomplicatedCustomRoles" HintPath="..\Ref\UncomplicatedCustomRoles.dll" Condition="$(DefineConstants.Contains(UNCOMPLICATED_ROLE_SUPPORTED))" />
-		<Reference Include="AudioPlayer" HintPath="..\Ref\AudioPlayer.dll" Condition="$(DefineConstants.Contains(SOUND_API_SUPPORTED))" />
-		<Reference Include="NVorbis" HintPath="..\Ref\NVorbis.dll" Condition="$(DefineConstants.Contains(SOUND_API_SUPPORTED))" />
-		<Reference Include="SCPSLAudioApi" HintPath="..\Ref\SCPSLAudioApi.dll" Condition="$(DefineConstants.Contains(SOUND_API_SUPPORTED))" />
+		<Reference Include="AudioPlayer" HintPath="..\Ref\SCPSLAudioApi.dll" Condition="$(DefineConstants.Contains(SOUND_API_SUPPORTED))" />
 
 	</ItemGroup>
 

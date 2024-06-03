@@ -1,11 +1,14 @@
 ﻿#if SOUND_API_SUPPORTED
-using AudioPlayer.API;
+
 #endif
+using AdminToys;
 using CommandSystem;
+using CommandSystem.Commands.RemoteAdmin;
 using Exiled.API.Extensions;
 using Exiled.API.Features.Roles;
 using MEC;
 using PlayerRoles;
+using SCPSLAudioApi.AudioCore;
 using Utils.NonAllocLINQ;
 using static NineTailedFoxAnnouncer;
 
@@ -18,6 +21,28 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
     public const string CommandConfigPermission = "ConfigHelp";
 
     public const string RoundRest_CoroutineTag = "kill_at_rest_(waitinforplayer)";
+
+#if SOUND_API_SUPPORTED
+
+    private Npc _soundAnnoncer;
+
+    public Npc SoundAnnoncer
+    {
+        get 
+        { 
+            if (_soundAnnoncer == null)
+            {
+                _soundAnnoncer = Npc.Spawn(Config.AnnoncerName, RoleTypeId.Spectator, userId: "Annoncer@ToolForExield");
+                _soundAnnoncer.RemoteAdminPermissions = PlayerPermissions.AFKImmunity;
+            }
+
+            return _soundAnnoncer; 
+        }
+        set { _soundAnnoncer = value; }
+    }
+
+
+#endif
 
     public static ToolForExiledPlugin Instance 
     { 
@@ -63,17 +88,46 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
 
     public void TryCassie(string message, string translation, string soungMessage)
     {
-#if SOUND_API_SUPPORTED
-        if (!string.IsNullOrEmpty(soungMessage))
-            AudioController.PlayAudioFromFile(soungMessage, id: IdForAudio);
-#endif
-
-        if (!string.IsNullOrEmpty(message))
+        try
         {
-            if (!string.IsNullOrEmpty(translation))
-                Cassie.MessageTranslated(message, translation);
-            else
-                Cassie.Message(message);
+#if SOUND_API_SUPPORTED
+            if (!string.IsNullOrEmpty(soungMessage))
+            {
+                var audio = AudioPlayerBase.Get(SoundAnnoncer.ReferenceHub);
+                audio.BroadcastChannel = VoiceChat.VoiceChatChannel.Intercom;
+                audio.AudioToPlay.Add(soungMessage);
+                if (audio.IsFinished)
+                    audio.Play(0);
+            }
+#endif
+            if (!string.IsNullOrEmpty(message))
+            {
+                if (!string.IsNullOrEmpty(translation))
+                    Cassie.MessageTranslated(message, translation);
+                else
+                    Cassie.Message(message);
+            }
+        }
+        catch (Exception e)
+        {
+            Log.Error(e);
+#if DEBUG
+            throw;
+#endif
+        }
+        finally
+        {
+#if SOUND_API_SUPPORTED
+            if (!string.IsNullOrEmpty(soungMessage))
+            {
+                var audio = AudioPlayerBase.Get(SoundAnnoncer.ReferenceHub);
+                var lastIndex = audio.AudioToPlay.Count - 1;
+                if (lastIndex >= 0 && audio.AudioToPlay[lastIndex] == soungMessage)
+                    audio.AudioToPlay.RemoveAt(lastIndex);
+                if (lastIndex == 0)
+                    audio.Stoptrack(false);
+            }
+#endif
         }
     }
 
