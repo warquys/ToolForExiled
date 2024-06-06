@@ -18,14 +18,14 @@ public class Zone : IRestable
         get
         {
             if (!bounds.HasValue)
-                RefreshCordonate();
+                RefreshCoordinate();
             return bounds.Value;
         }
     }
 
     void IRestable.Reset()
     {
-        RefreshCordonate();
+        RefreshCoordinate();
     }
 
 
@@ -34,7 +34,7 @@ public class Zone : IRestable
         return Bounds.Contains(player.Position);
     }
 
-    public void RefreshCordonate()
+    public void RefreshCoordinate()
     {
         var bounds = new Bounds();
         var min = CornerA.GetMapPosition();

@@ -1,5 +1,5 @@
 ﻿#if SOUND_API_SUPPORTED
-
+using SCPSLAudioApi.AudioCore;
 #endif
 using AdminToys;
 using CommandSystem;
@@ -8,9 +8,9 @@ using Exiled.API.Extensions;
 using Exiled.API.Features.Roles;
 using MEC;
 using PlayerRoles;
-using SCPSLAudioApi.AudioCore;
 using Utils.NonAllocLINQ;
 using static NineTailedFoxAnnouncer;
+using System.Text.RegularExpressions;
 
 namespace ToolForExiled;
 
@@ -32,8 +32,14 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
         { 
             if (_soundAnnoncer == null)
             {
-                _soundAnnoncer = Npc.Spawn(Config.AnnoncerName, RoleTypeId.Spectator, userId: "Annoncer@ToolForExield");
+                _soundAnnoncer = Npc.Spawn(Config.AnnoncerName, RoleTypeId.Spectator, userId: "Annoncer@ToolForExiled");
+                Player.Dictionary.Remove(_soundAnnoncer.GameObject);
+                ReferenceHub.AllHubs.Remove(_soundAnnoncer.ReferenceHub);
                 _soundAnnoncer.RemoteAdminPermissions = PlayerPermissions.AFKImmunity;
+                var audio = AudioPlayerBase.Get(SoundAnnoncer.ReferenceHub);
+                audio.BroadcastChannel = VoiceChat.VoiceChatChannel.Intercom;
+                _soundAnnoncer.RankName = "Cassie";
+                _soundAnnoncer.RankColor = "light_green";
             }
 
             return _soundAnnoncer; 
@@ -86,17 +92,32 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
         Restables.ForEach(p => p.Reset());
     }
 
-    public void TryCassie(string message, string translation, string soungMessage)
+    public void Replaces(ref string str, params (string patern, object replacement)[] replacements)
+    {
+        foreach ((string pattern, object replacement) in replacements)
+        {
+            str = str.Replace(pattern, replacement.ToString());
+        }
+    }
+
+    public void IgnoreCaseReplaces(ref string str, params (string pattern, object replacement)[] replacements)
+    {
+        foreach ((string pattern, object replacement) in replacements)
+        {
+            str = Regex.Replace(str, pattern, replacement.ToString(), RegexOptions.IgnoreCase);
+        }
+    }
+
+    public void TryCassie(string message, string translation, string soundMessage)
     {
         try
         {
 #if SOUND_API_SUPPORTED
-            if (!string.IsNullOrEmpty(soungMessage))
+            if (!string.IsNullOrEmpty(soundMessage))
             {
                 var audio = AudioPlayerBase.Get(SoundAnnoncer.ReferenceHub);
-                audio.BroadcastChannel = VoiceChat.VoiceChatChannel.Intercom;
-                audio.AudioToPlay.Add(soungMessage);
-                if (audio.IsFinished)
+                audio.AudioToPlay.Add(soundMessage);
+                if (audio.CurrentPlay == null || audio.IsFinished)
                     audio.Play(0);
             }
 #endif
@@ -118,11 +139,11 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
         finally
         {
 #if SOUND_API_SUPPORTED
-            if (!string.IsNullOrEmpty(soungMessage))
+            if (!string.IsNullOrEmpty(soundMessage))
             {
                 var audio = AudioPlayerBase.Get(SoundAnnoncer.ReferenceHub);
                 var lastIndex = audio.AudioToPlay.Count - 1;
-                if (lastIndex >= 0 && audio.AudioToPlay[lastIndex] == soungMessage)
+                if (lastIndex >= 0 && audio.AudioToPlay[lastIndex] == soundMessage)
                     audio.AudioToPlay.RemoveAt(lastIndex);
                 if (lastIndex == 0)
                     audio.Stoptrack(false);
@@ -133,7 +154,7 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
 
     public void CassieConvertRoleName(RoleInformation role, out string withoutSpace, out string withSpace)
     {
-        if (role.RoleType == RoleType.Vanila)
+        if (role.RoleSystem == RoleTypeSystem.Vanila)
         {
             var roleTypeId = (RoleTypeId)role.RoleId;
             if (RoleExtensions.GetTeam(roleTypeId) == Team.SCPs)

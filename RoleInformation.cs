@@ -1,4 +1,5 @@
-﻿using Exiled.CustomRoles.API;
+﻿using System;
+using Exiled.CustomRoles.API;
 using Exiled.CustomRoles.API.Features;
 using PlayerRoles;
 #if UNCOMPLICATED_ROLE_SUPPORTED
@@ -7,19 +8,16 @@ using UncomplicatedCustomRoles.API.Features;
 
 namespace ToolForExiled;
 
-public class RoleInformation(RoleType roleType, uint roleId) : IEquatable<RoleInformation>
+public record struct RoleInformation(RoleTypeSystem RoleSystem, uint RoleId)
 {
     public const uint NONE_ID = uint.MaxValue;
 
-    // WTF! YOU DO NOT USE EXILED AND YOU WHANT TO ADD YOUR CUSTOM ROLE MANAGEMENT !!!
+    // WTF! YOU DO NOT USE EXILED CUSTOM ROLES AND YOU WHANT TO ADD YOUR CUSTOM ROLES MANAGEMENT !!!
     // LUCK
 
-    public RoleType RoleType { get; set; } = roleType;
-    public uint RoleId { get; set; } = roleId;
+    public RoleInformation() : this(RoleTypeSystem.Vanilla, 0) { }
 
-    public RoleInformation() : this(RoleType.Vanila, 0) { }
-
-    public RoleInformation(RoleTypeId roleTypeId) : this(RoleType.Vanila, unchecked((uint)roleTypeId)) { }
+    public RoleInformation(RoleTypeId roleTypeId) : this(RoleTypeSystem.Vanilla, unchecked((uint)roleTypeId)) { }
 
     public void SetRole(Player player)
     {
@@ -28,13 +26,13 @@ public class RoleInformation(RoleType roleType, uint roleId) : IEquatable<RoleIn
         foreach (var exiledCustomRole in customRoles)
             exiledCustomRole.RemoveRole(player);
 
-        switch (RoleType)
+        switch (RoleSystem)
         {
-            case RoleType.Vanila:
+            case RoleTypeSystem.Vanilla:
                 player.Role.Set((RoleTypeId)RoleId, RoleSpawnFlags.All);
                 break;
 
-            case RoleType.CustomRoleExiled:
+            case RoleTypeSystem.CustomRolesExiled:
                 if (!CustomRole.TryGet(RoleId, out var role) || role == null)
                 {
                     Log.Warn($"Role {RoleId} not found.");
@@ -50,7 +48,7 @@ public class RoleInformation(RoleType roleType, uint roleId) : IEquatable<RoleIn
                 break;
 #endif
 
-            // where add you code to spwn the role...
+            // where add you code to spawn the role...
 
             default:
                 break;
@@ -59,13 +57,13 @@ public class RoleInformation(RoleType roleType, uint roleId) : IEquatable<RoleIn
 
     public bool IsValid(Player player, bool? hasCustomRole = null)
     {
-        switch (RoleType)
+        switch (RoleSystem)
         {
-            case RoleType.Vanila when !(hasCustomRole ?? player.HasCustomRole()):
+            case RoleTypeSystem.Vanila when !(hasCustomRole ?? player.HasCustomRole()):
                 if (player.Role.Type < 0) return false;
-                return ((uint)player.Role.Type) == RoleId;
+                return unchecked((uint)player.Role.Type) == RoleId;
 
-            case RoleType.CustomRoleExiled when hasCustomRole ?? true:
+            case RoleTypeSystem.CustomRolesExiled when hasCustomRole ?? true:
                 if (CustomRole.TryGet(RoleId, out var role) && role != null)
                     return role.Check(player);
                 goto default;
@@ -82,36 +80,6 @@ public class RoleInformation(RoleType roleType, uint roleId) : IEquatable<RoleIn
             default:
                 return false;
         }
-    }
-
-    public override bool Equals(object obj)
-    {
-        return Equals(obj as RoleInformation);
-    }
-
-    public bool Equals(RoleInformation other)
-    {
-        return other is not null &&
-               RoleType == other.RoleType &&
-               RoleId == other.RoleId;
-    }
-
-    public override int GetHashCode()
-    {
-        int hashCode = -1723842667;
-        hashCode = hashCode * -1521134295 + RoleType.GetHashCode();
-        hashCode = hashCode * -1521134295 + RoleId.GetHashCode();
-        return hashCode;
-    }
-
-    public static bool operator ==(RoleInformation left, RoleInformation right)
-    {
-        return EqualityComparer<RoleInformation>.Default.Equals(left, right);
-    }
-
-    public static bool operator !=(RoleInformation left, RoleInformation right)
-    {
-        return !(left == right);
     }
 }
 
@@ -148,13 +116,17 @@ public static class CustomRoleExtension
 }
 
 
-public enum RoleType
+public enum RoleTypeSystem
 {
     Vanila,
+    // lol i forget an l
+    Vanilla = Vanila,
     CustomRoleExiled,
+    // lol i forget an s
+    CustomRolesExiled = CustomRoleExiled,
 #if UNCOMPLICATED_ROLE_SUPPORTED
     UncomplicatedCustomRole,
 #endif
 
-    // where the system that you use
+    // the system that you use
 }

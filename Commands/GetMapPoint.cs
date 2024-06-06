@@ -38,8 +38,8 @@ public class GetMapPoint : ICommand
         else
         {
             var cameraTransform = player.CameraTransform;
-            Physics.Raycast(cameraTransform.position, cameraTransform.forward, out RaycastHit raycastHit, 100f);
-            point = new RoomPoint(raycastHit.point + Vector3.up * 0.1f, Quaternion.identity);
+            Physics.Raycast(cameraTransform.position, cameraTransform.forward, out RaycastHit recastHit, 100f);
+            point = new RoomPoint(recastHit.point + Vector3.up * 0.1f, Quaternion.identity);
         }
         response = $"\nThe position {(arguments.Count != 0 ? "where you stand" : "you are looking at")} as RoomPoint (change , to . in the syml config):" +
                         $"\n  room: {point.RoomType}" +

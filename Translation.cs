@@ -14,7 +14,7 @@ public class Translation : ITranslation
     public Dictionary<RoleInformation, RoleName> RoleName = new Dictionary<RoleInformation, RoleName>()
     {
         {
-            new RoleInformation(RoleType.CustomRoleExiled, 999),
+            new RoleInformation(RoleTypeSystem.CustomRoleExiled, 999),
             new RoleName("SCP-999", "S C P 9 9 9")
         }
     };
