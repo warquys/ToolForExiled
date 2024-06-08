@@ -2,8 +2,14 @@
 using Exiled.CustomRoles.API;
 using Exiled.CustomRoles.API.Features;
 using PlayerRoles;
+using ExCustomRole = Exiled.CustomRoles.API.Features.CustomRole;
+using Exiled.CustomRoles;
+
 #if UNCOMPLICATED_ROLE_SUPPORTED
 using UncomplicatedCustomRoles.API.Features;
+using UncomplicatedCustomRoles.Extensions;
+using UnCustomRole = UncomplicatedCustomRoles.API.Features.CustomRole;
+using UnPlayerExtension = UncomplicatedCustomRoles.Extensions.PlayerExtension;
 #endif
 
 namespace ToolForExiled;
@@ -33,7 +39,7 @@ public record struct RoleInformation(RoleTypeSystem RoleSystem, uint RoleId)
                 break;
 
             case RoleTypeSystem.CustomRolesExiled:
-                if (!CustomRole.TryGet(RoleId, out var role) || role == null)
+                if (!ExCustomRole.TryGet(RoleId, out var role) || role == null)
                 {
                     Log.Warn($"Role {RoleId} not found.");
                     return;
@@ -43,8 +49,8 @@ public record struct RoleInformation(RoleTypeSystem RoleSystem, uint RoleId)
                 break;
 
 #if UNCOMPLICATED_ROLE_SUPPORTED
-            case RoleType.UncomplicatedCustomRole:
-                Manager.Summon(player, unchecked((int)RoleId));
+            case RoleTypeSystem.UncomplicatedCustomRole:
+                player.SetCustomRole(unchecked((int)RoleId));
                 break;
 #endif
 
@@ -64,13 +70,13 @@ public record struct RoleInformation(RoleTypeSystem RoleSystem, uint RoleId)
                 return unchecked((uint)player.Role.Type) == RoleId;
 
             case RoleTypeSystem.CustomRolesExiled when hasCustomRole ?? true:
-                if (CustomRole.TryGet(RoleId, out var role) && role != null)
+                if (ExCustomRole.TryGet(RoleId, out var role) && role != null)
                     return role.Check(player);
                 goto default;
 
 #if UNCOMPLICATED_ROLE_SUPPORTED
-            case RoleType.UncomplicatedCustomRole when hasCustomRole ?? true:
-                if (Manager.GetAlive().TryGetValue(player.Id, out int id))
+            case RoleTypeSystem.UncomplicatedCustomRole when hasCustomRole ?? true:
+                if (UnCustomRole.Alive.TryGetValue(player.Id, out int id))
                     return unchecked((uint)id) == RoleId;
                 goto default;
 #endif
@@ -89,11 +95,11 @@ public static class CustomRoleExtension
     // JUSTE EDIT THIS TO SAY IF YES OR NO THE PLAYER AVE A CUSTOME ROLE.
     public static bool HasCustomRole(this Player player)
     {
-        var hasExile = CustomRole.Registered.Any(p => p.Check(player));
+        var hasExile = ExCustomRole.Registered.Any(p => p.Check(player));
         if (hasExile) return true;
 
 #if UNCOMPLICATED_ROLE_SUPPORTED
-        var hasUncompicated = Manager.HasCustomRole(player);
+        var hasUncompicated = UnPlayerExtension.HasCustomRole(player);
         if (hasUncompicated) return true;
 #endif
 

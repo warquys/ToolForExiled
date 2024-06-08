@@ -15,6 +15,8 @@ public class GetMapPoint : ICommand
 
     public string Description => ToolForExiledPlugin.Instance.Translation.GetMapPointDescription;
 
+    public bool SanitizeResponse => true;
+
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
         var player = Player.Get(sender);

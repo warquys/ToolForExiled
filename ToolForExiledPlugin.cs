@@ -88,6 +88,9 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
     public void Rest()
     {
         Log.Debug("Rest, base on Waiting For Players");
+#if SOUND_API_SUPPORTED
+        SoundAnnoncer = null;
+#endif
         Timing.KillCoroutines(RoundRest_CoroutineTag);
         Restables.ForEach(p => p.Reset());
     }
@@ -139,7 +142,7 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
         finally
         {
 #if SOUND_API_SUPPORTED
-            if (!string.IsNullOrEmpty(soundMessage))
+            if (!string.IsNullOrEmpty(soundMessage) && SoundAnnoncer.ReferenceHub == null)
             {
                 var audio = AudioPlayerBase.Get(SoundAnnoncer.ReferenceHub);
                 var lastIndex = audio.AudioToPlay.Count - 1;
