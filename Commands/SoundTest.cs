@@ -7,6 +7,7 @@ using SCPSLAudioApi.AudioCore;
 namespace ToolForExiled.Commands;
 
 [CommandHandler(typeof(RemoteAdminCommandHandler))]
+[CommandHandler(typeof(GameConsoleCommandHandler))]
 public class SoundTest : ICommand
 {
     public string Command => "SoundTest";
@@ -15,15 +16,13 @@ public class SoundTest : ICommand
 
     public string Description => "test";
 
+    public bool SanitizeResponse => true;
+    
+    public string SoundPath = "C:\\Users\\Pc\\AppData\\Roaming\\EXILED\\Femur.ogg";
+
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
-        var tool = ToolForExiledPlugin.Instance;
-        var audio = AudioPlayerBase.Get(tool.SoundAnnoncer.ReferenceHub);
-        audio.AudioToPlay.Add("C:\\Users\\Pc\\AppData\\Roaming\\EXILED\\Femur.ogg");
-        audio.LogDebug = true;
-        audio.LogInfo = true;
-        if (audio.CurrentPlay == null || audio.IsFinished)
-            audio.Play(0);
+        ToolForExiledPlugin.Instance.TryCassie("", "", SoundPath);
         response = "";
         return true;
     }

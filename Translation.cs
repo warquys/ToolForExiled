@@ -23,7 +23,7 @@ public class Translation : ITranslation
     [Description("Need a full restart.")]
     public string GetMapPointCommand { get; set; } = nameof(GetMapPoint);
     public string[] GetMapPointAliases { get; set; } = new[] { "MapPoint", "GetRoomPoint", "RoomPoint" };
-    public string GetMapPointDescription { get; set; } = "Return the map point.";
+    public string GetMapPointDescription { get; set; } = "Return the map point. 'me' for player position and not looking at, 'surface' out off room.";
 
 }
 

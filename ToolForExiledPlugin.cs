@@ -11,6 +11,8 @@ using PlayerRoles;
 using Utils.NonAllocLINQ;
 using static NineTailedFoxAnnouncer;
 using System.Text.RegularExpressions;
+using Exiled.Events.Features;
+using System.Collections.Generic;
 
 namespace ToolForExiled;
 
@@ -30,17 +32,23 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
     {
         get 
         { 
-            if (_soundAnnoncer == null)
+            if (_soundAnnoncer == null || _soundAnnoncer.ReferenceHub == null)
             {
+                if (_soundAnnoncer != null)
+                    _soundAnnoncer.Destroy();
+
                 _soundAnnoncer = Npc.Spawn(Config.AnnoncerName, RoleTypeId.Spectator, userId: "Annoncer@ToolForExiled");
                 Player.Dictionary.Remove(_soundAnnoncer.GameObject);
                 ReferenceHub.AllHubs.Remove(_soundAnnoncer.ReferenceHub);
                 _soundAnnoncer.RemoteAdminPermissions = PlayerPermissions.AFKImmunity;
                 var audio = AudioPlayerBase.Get(SoundAnnoncer.ReferenceHub);
+                audio.Continue = true;
+                audio.ShouldPlay = true;
                 audio.BroadcastChannel = VoiceChat.VoiceChatChannel.Intercom;
                 _soundAnnoncer.RankName = "Cassie";
                 _soundAnnoncer.RankColor = "light_green";
             }
+            
 
             return _soundAnnoncer; 
         }
@@ -89,6 +97,12 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
     {
         Log.Debug("Rest, base on Waiting For Players");
 #if SOUND_API_SUPPORTED
+        try
+        {
+            SoundAnnoncer.Destroy();
+        }
+        catch { };
+
         SoundAnnoncer = null;
 #endif
         Timing.KillCoroutines(RoundRest_CoroutineTag);
@@ -118,7 +132,7 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
 #if SOUND_API_SUPPORTED
             if (!string.IsNullOrEmpty(soundMessage))
             {
-                var audio = AudioPlayerBase.Get(SoundAnnoncer.ReferenceHub);
+                var audio = AudioPlayerBase.Get(SoundAnnoncer.ReferenceHub);    
                 audio.AudioToPlay.Add(soundMessage);
                 if (audio.CurrentPlay == null || audio.IsFinished)
                     audio.Play(0);
@@ -135,22 +149,21 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
         catch (Exception e)
         {
             Log.Error(e);
-#if DEBUG
-            throw;
-#endif
-        }
-        finally
-        {
 #if SOUND_API_SUPPORTED
-            if (!string.IsNullOrEmpty(soundMessage) && SoundAnnoncer.ReferenceHub == null)
+            if (!string.IsNullOrEmpty(soundMessage) && SoundAnnoncer.ReferenceHub != null) try
             {
                 var audio = AudioPlayerBase.Get(SoundAnnoncer.ReferenceHub);
                 var lastIndex = audio.AudioToPlay.Count - 1;
                 if (lastIndex >= 0 && audio.AudioToPlay[lastIndex] == soundMessage)
                     audio.AudioToPlay.RemoveAt(lastIndex);
-                if (lastIndex == 0)
+                if (lastIndex == -1)
                     audio.Stoptrack(false);
             }
+            catch { }
+#endif
+
+#if DEBUG
+            throw;
 #endif
         }
     }

@@ -32,16 +32,25 @@ public class GetMapPoint : ICommand
             return false;
         }
 
+        var refSurface = arguments.Contains("surface");
+
         RoomPoint point;
-        if (arguments.Count != 0)
+        if (arguments.Contains("me"))
         {
-            point = new RoomPoint(player.Position, player.Rotation);
+            if (refSurface)
+                point = new RoomPoint(Room.Get(RoomType.Surface), player.Position, player.Rotation);
+            else
+                point = new RoomPoint(player.Position, player.Rotation);
         }
         else
         {
             var cameraTransform = player.CameraTransform;
             Physics.Raycast(cameraTransform.position, cameraTransform.forward, out RaycastHit recastHit, 100f);
-            point = new RoomPoint(recastHit.point + Vector3.up * 0.1f, Quaternion.identity);
+            var hit = recastHit.point + Vector3.up * 0.1f;
+            if (refSurface)
+                point = new RoomPoint(Room.Get(RoomType.Surface), hit, Quaternion.identity);
+            else
+                point = new RoomPoint(hit, Quaternion.identity);
         }
         response = $"\nThe position {(arguments.Count != 0 ? "where you stand" : "you are looking at")} as RoomPoint (change , to . in the syml config):" +
                         $"\n  room: {point.RoomType}" +
