@@ -43,7 +43,7 @@ public class BarActionDisplayer : IProgressActionDisplayer
         }
         else
         {
-            var fullChar = (int)Math.Ceiling(progress / BarLength);
+            var fullChar = (int)Math.Ceiling((progress / 100) * BarLength);
             var emptyChar = (int)BarLength - fullChar - 1; // -1 bc the Head Char
             stringBuilder.Append(LoadingStarBarString);
             stringBuilder.Append(new String(LoadingFullChar, fullChar));
