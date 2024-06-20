@@ -24,8 +24,13 @@ public class LongAction
     public LongAction(int totalSlice, float timeForAllAction, Player player)
     {
         Progress = 0;
-        TotalSlice = totalSlice;
-        TimeForEachSlice = (timeForAllAction / totalSlice) + NetworkOffset;
+        TotalSlice = Math.Max(totalSlice, 1);
+        TimeForEachSlice = timeForAllAction / totalSlice;
+#if DEBUG
+        Log.Info($"TimeForEachSlice {TimeForEachSlice}");
+        Log.Info($"TotalSlice {TotalSlice}");
+        Log.Info($"TotalSlice*TimeForEachSlice {TotalSlice * TimeForEachSlice}");
+#endif
         Player = player;
     }
 
@@ -38,9 +43,20 @@ public class LongAction
     {
         for (int i = 0; i < TotalSlice; i++)
         {
-            Progress = i * 100 / TotalSlice;
+            Progress = (i / (float)TotalSlice) * 100;
 
-            ProgressActionShower?.ShowLoading(Player, Progress, TimeForEachSlice);
+            try
+            {
+                ProgressActionShower?.ShowLoading(Player, Progress, TimeForEachSlice + NetworkOffset);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+#if DEBUG
+                Log.Error($"Progress {Progress}");
+#endif
+                throw;
+            }
 
             yield return Timing.WaitForSeconds(TimeForEachSlice);
 
@@ -50,10 +66,14 @@ public class LongAction
                 yield break;
             }
         }
-
+#if DEBUG
+        Log.Info("Action End");
+#endif
         ProgressActionShower?.ShowLoading(Player, 100, TimeForEachSlice);
     
         if (EndAction != null)
+        {
             EndAction(Player);
+        }
     }
 }

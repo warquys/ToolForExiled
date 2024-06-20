@@ -34,6 +34,8 @@ public class BarActionDisplayer : IProgressActionDisplayer
     public void ShowLoading(Player player, float progress, float duration)
     {
         stringBuilder.Clear();
+        progress = Mathf.Ceil(progress);
+
         if (progress == 100)
         {
             stringBuilder.Clear();
@@ -47,8 +49,9 @@ public class BarActionDisplayer : IProgressActionDisplayer
             var emptyChar = (int)BarLength - fullChar - 1; // -1 bc the Head Char
             stringBuilder.Append(LoadingStarBarString);
             stringBuilder.Append(new String(LoadingFullChar, fullChar));
-            stringBuilder.Append(LoadingHeadChar);
-            stringBuilder.Append(new String(LoadingEmptyChar, emptyChar));
+            if (emptyChar >= 0)
+                stringBuilder.Append(LoadingHeadChar);
+            stringBuilder.Append(new String(LoadingEmptyChar, Math.Max(emptyChar, 0)));
             stringBuilder.Append(LoadingEndBarString);
         }
 

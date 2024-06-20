@@ -18,11 +18,24 @@ public class TestLongAction : ICommand
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
         var player = Player.Get(sender);
-        var longAction = new LongAction(10, 10, player)
+        var longAction = new LongAction(20, 10, player)
         {
             CheckAction = (player) => true,
-            EndAction = (player) => Log.Info("Action ended"),
+            EndAction = (player) =>
+            {
+                var longAction = new LongAction(10, 10, player)
+                {
+                    CheckAction = (player) => true,
+                    EndAction = (player) => Log.Info("Action ended"),
+                    ProgressActionShower = new PourcentageActionDisplayer()
+                };
+                longAction.StartAction();
+                Log.Info("Action ended");
+            },
             ProgressActionShower = new BarActionDisplayer()
+            {
+                BarLength = 15,
+            }
         };
         longAction.StartAction();
         response = "";
