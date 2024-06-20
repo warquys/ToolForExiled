@@ -49,7 +49,6 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
                 _soundAnnoncer.RankColor = "light_green";
             }
             
-
             return _soundAnnoncer; 
         }
         set { _soundAnnoncer = value; }
@@ -84,13 +83,27 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
     public override void OnEnabled()
     {
         ServerEvents.WaitingForPlayers.Subscribe(Rest);
+        AudioPlayerBase.OnFinishedTrack += OnFinishTrack;
         base.OnEnabled();
     }
 
     public override void OnDisabled()
     {
         ServerEvents.WaitingForPlayers.Unsubscribe(Rest);
+        AudioPlayerBase.OnFinishedTrack -= OnFinishTrack;
         base.OnDisabled();
+    }
+
+    public void OnFinishTrack(AudioPlayerBase playerBase, string track, bool directPlay, ref int nextQueuePos)
+    {
+        if (_soundAnnoncer == null || _soundAnnoncer.ReferenceHub == null)
+            return;
+
+        var audio = AudioPlayerBase.Get(_soundAnnoncer.ReferenceHub);
+        if (audio != playerBase)
+            return;
+
+        _soundAnnoncer.Destroy();
     }
 
     public void Rest()
