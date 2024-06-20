@@ -34,8 +34,15 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
         { 
             if (_soundAnnoncer == null || _soundAnnoncer.ReferenceHub == null)
             {
+                // IDK Exiled crash
                 if (_soundAnnoncer != null)
-                    _soundAnnoncer.Destroy();
+                {
+                    try
+                    {
+                        _soundAnnoncer.Destroy();
+                    }
+                    catch { }
+                }
 
                 _soundAnnoncer = Npc.Spawn(Config.AnnoncerName, RoleTypeId.Spectator, userId: "Annoncer@ToolForExiled");
                 Player.Dictionary.Remove(_soundAnnoncer.GameObject);
@@ -83,17 +90,22 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
     public override void OnEnabled()
     {
         ServerEvents.WaitingForPlayers.Subscribe(Rest);
+#if SOUND_API_SUPPORTED
         AudioPlayerBase.OnFinishedTrack += OnFinishTrack;
+#endif
         base.OnEnabled();
     }
 
     public override void OnDisabled()
     {
         ServerEvents.WaitingForPlayers.Unsubscribe(Rest);
+#if SOUND_API_SUPPORTED
         AudioPlayerBase.OnFinishedTrack -= OnFinishTrack;
+#endif
         base.OnDisabled();
     }
 
+#if SOUND_API_SUPPORTED
     public void OnFinishTrack(AudioPlayerBase playerBase, string track, bool directPlay, ref int nextQueuePos)
     {
         if (_soundAnnoncer == null || _soundAnnoncer.ReferenceHub == null)
@@ -105,6 +117,7 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
 
         _soundAnnoncer.Destroy();
     }
+#endif
 
     public void Rest()
     {
@@ -112,11 +125,12 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
 #if SOUND_API_SUPPORTED
         try
         {
-            SoundAnnoncer.Destroy();
+            if (_soundAnnoncer != null)
+                _soundAnnoncer.Destroy();
         }
-        catch { };
+        catch { }
 
-        SoundAnnoncer = null;
+        _soundAnnoncer = null;
 #endif
         Timing.KillCoroutines(RoundRest_CoroutineTag);
         Restables.ForEach(p => p.Reset());
