@@ -13,6 +13,7 @@ using static NineTailedFoxAnnouncer;
 using System.Text.RegularExpressions;
 using Exiled.Events.Features;
 using System.Collections.Generic;
+using System.Data;
 
 namespace ToolForExiled;
 
@@ -34,16 +35,6 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
         { 
             if (_soundAnnoncer == null || _soundAnnoncer.ReferenceHub == null)
             {
-                // IDK Exiled crash
-                if (_soundAnnoncer != null)
-                {
-                    try
-                    {
-                        _soundAnnoncer.Destroy();
-                    }
-                    catch { }
-                }
-
                 _soundAnnoncer = Npc.Spawn(Config.AnnoncerName, RoleTypeId.Spectator, userId: "Annoncer@ToolForExiled");
                 Player.Dictionary.Remove(_soundAnnoncer.GameObject);
                 ReferenceHub.AllHubs.Remove(_soundAnnoncer.ReferenceHub);
@@ -111,11 +102,8 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
         if (_soundAnnoncer == null || _soundAnnoncer.ReferenceHub == null)
             return;
 
-        var audio = AudioPlayerBase.Get(_soundAnnoncer.ReferenceHub);
-        if (audio != playerBase)
-            return;
-
         _soundAnnoncer.Destroy();
+        _soundAnnoncer = null;
     }
 #endif
 
@@ -123,13 +111,15 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
     {
         Log.Debug("Rest, base on Waiting For Players");
 #if SOUND_API_SUPPORTED
-        try
+        Timing.CallDelayed(1f, () =>
         {
-            if (_soundAnnoncer != null)
-                _soundAnnoncer.Destroy();
-        }
-        catch { }
-
+            try
+            {
+                if (_soundAnnoncer != null)
+                    _soundAnnoncer.Destroy();
+            }
+            catch { }
+        });
         _soundAnnoncer = null;
 #endif
         Timing.KillCoroutines(RoundRest_CoroutineTag);
@@ -203,13 +193,18 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
             if (RoleExtensions.GetTeam(roleTypeId) == Team.SCPs)
             {
                 ConvertSCP(roleTypeId, out withoutSpace, out withSpace);
+                withoutSpace ??= string.Empty;
+                withSpace ??= string.Empty; 
                 return;
             }
         }
 
-        if (Translation.RoleName.TryGetValue(role, out var name))
+        var roleName = Translation.RoleName.Find(p => p.Role == role);
+        if (roleName != null)
         {
-            name.Deconstruct(out withSpace, out withoutSpace);
+            roleName.Deconstruct(out withSpace, out withoutSpace);
+            withoutSpace ??= string.Empty;
+            withSpace ??= string.Empty; 
             return;
         }
 
@@ -227,20 +222,21 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
     public void CassieConvertRoleName(Player player, out string withoutSpace, out string withSpace)
     {
         var hasCustomRole = player.HasCustomRole();
-        if (hasCustomRole) 
+        var roleName = Translation.RoleName.Find(p => p.Role.IsValid(player, hasCustomRole));
+        if (roleName != null)
         {
-            var name = Translation.RoleName.FirstOrDefault(p => p.Key.IsValid(player, hasCustomRole)).Value;
-            if (name != null)
-            {
-                name.Deconstruct(out withSpace, out withoutSpace);
-                return;
-            }
+            roleName.Deconstruct(out withSpace, out withoutSpace);
+            withoutSpace ??= string.Empty;
+            withSpace ??= string.Empty; 
+            return;
+        }
 
-            if (player.IsScp)
-            {
-                ConvertSCP(player.Role.Type, out withoutSpace, out withSpace);
-                return;
-            }
+        if (!hasCustomRole && player.IsScp)
+        {
+            ConvertSCP(player.Role.Type, out withoutSpace, out withSpace);
+            withoutSpace ??= string.Empty;
+            withSpace ??= string.Empty;
+            return;
         }
 
         withoutSpace = "";

@@ -14,7 +14,7 @@ public class SoundTest : ICommand
 
     public string[] Aliases => new string[0];
 
-    public string Description => "test";
+    public string Description => "testSD";
 
     public bool SanitizeResponse => true;
     

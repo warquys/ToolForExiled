@@ -11,12 +11,9 @@ public class Translation : ITranslation
     public string PlayerNotFound { get; set; } = "Impossible to find: %player%.";
 
     [Description("By default the vanila SCP name are handles. ")]
-    public Dictionary<RoleInformation, RoleName> RoleName = new Dictionary<RoleInformation, RoleName>()
+    public List<RoleName> RoleName { get; set; } = new List<RoleName>()
     {
-        {
-            new RoleInformation(RoleTypeSystem.CustomRoleExiled, 999),
-            new RoleName("SCP-999", "S C P 9 9 9")
-        }
+        new RoleName(new RoleInformation(RoleTypeSystem.CustomRoleExiled, 999), "999", "9 9 9")
     };
 
 
@@ -27,4 +24,29 @@ public class Translation : ITranslation
 
 }
 
-public record RoleName(string NameNoScape, string NameSpaced);
+public class RoleName
+{
+    public RoleInformation Role { get; set; }
+    public string NameNoSpace { get; set; }
+    public string NameSpaced { get; set; }
+
+    public RoleName()
+    {
+        Role = new RoleInformation();
+        NameSpaced = "";
+        NameSpaced = "";
+    }
+
+    public RoleName(RoleInformation role, string nameNoSpace, string nameSpaced)
+    {
+        Role = role;
+        NameNoSpace = nameNoSpace;
+        NameSpaced = nameSpaced;
+    }
+
+    public void Deconstruct(out string nameSpaced, out string nameNoSpace)
+    {
+        nameNoSpace = NameNoSpace;
+        nameSpaced = NameSpaced;
+    }
+}

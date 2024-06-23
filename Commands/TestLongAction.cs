@@ -4,6 +4,7 @@ using ToolForExiled.PlayerActions;
 
 namespace ToolForExiled.Commands;
 
+[CommandHandler(typeof(GameConsoleCommandHandler))]
 [CommandHandler(typeof(RemoteAdminCommandHandler))]
 public class TestLongAction : ICommand
 {
@@ -11,7 +12,7 @@ public class TestLongAction : ICommand
 
     public string[] Aliases => new string[0];
 
-    public string Description => "test";
+    public string Description => "testLA";
 
     public bool SanitizeResponse => true;
 

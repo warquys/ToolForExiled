@@ -18,6 +18,8 @@ public record struct ItemInformation(ItemTypeSystem ItemSystem, uint ItemId)
 
     public bool IsValid(Item item, bool? isCustomItem = null)
     {
+        if (item == null) return false;
+
         switch (ItemSystem)
         {
             case ItemTypeSystem.Vanila when !(isCustomItem ?? item.IsCustom()):

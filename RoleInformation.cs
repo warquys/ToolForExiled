@@ -27,6 +27,8 @@ public record struct RoleInformation(RoleTypeSystem RoleSystem, uint RoleId)
 
     public void SetRole(Player player)
     {
+        if (player == null) return;
+
         var customRoles = player.GetCustomRoles();
         
         foreach (var exiledCustomRole in customRoles)
@@ -63,6 +65,8 @@ public record struct RoleInformation(RoleTypeSystem RoleSystem, uint RoleId)
 
     public bool IsValid(Player player, bool? hasCustomRole = null)
     {
+        if (player == null) return false;
+
         switch (RoleSystem)
         {
             case RoleTypeSystem.Vanila when !(hasCustomRole ?? player.HasCustomRole()):
@@ -86,6 +90,11 @@ public record struct RoleInformation(RoleTypeSystem RoleSystem, uint RoleId)
             default:
                 return false;
         }
+    }
+
+    public override string ToString()
+    {
+        return $"{RoleSystem}, {RoleId}";
     }
 }
 
