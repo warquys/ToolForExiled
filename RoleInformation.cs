@@ -125,7 +125,7 @@ public static class CustomRoleExtension
     {
         var hasCustomRole = player.HasCustomRole();
         role = roles.FirstOrDefault(p => p.IsValid(player, hasCustomRole));
-        return role != null;
+        return role != default;
     }
 
 }

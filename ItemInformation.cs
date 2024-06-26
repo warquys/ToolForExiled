@@ -61,7 +61,7 @@ public static class CustomItemExtension
     {
         var isCustom = item.IsCustom();
         itemInfo = items.FirstOrDefault(p => p.IsValid(item, isCustom));
-        return itemInfo != null;
+        return itemInfo != default;
     }
 }
 

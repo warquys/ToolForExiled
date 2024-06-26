@@ -39,27 +39,33 @@
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UncomplicatedRoleSupported_Release|AnyCPU'">
 		<DefineConstants>$(DefineConstants);UNCOMPLICATED_ROLE_SUPPORTED</DefineConstants>
+		<Optimize>true</Optimize>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UncomplicatedRoleSupported_Debug|AnyCPU'">
 		<DefineConstants>$(DefineConstants);UNCOMPLICATED_ROLE_SUPPORTED;DEBUG</DefineConstants>
+		<Optimize>false</Optimize>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='SoundSupported_Release|AnyCPU'">
 		<DefineConstants>$(DefineConstants);SOUND_API_SUPPORTED</DefineConstants>
+		<Optimize>true</Optimize>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='SoundSupported_Debug|AnyCPU'">
 		<DefineConstants>$(DefineConstants);SOUND_API_SUPPORTED;DEBUG</DefineConstants>
+		<Optimize>false</Optimize>
 	</PropertyGroup>
 
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UncomplicatedRoleAndSoundSupported_Release|AnyCPU'">
 		<DefineConstants>$(DefineConstants);UNCOMPLICATED_ROLE_SUPPORTED;SOUND_API_SUPPORTED</DefineConstants>
+		<Optimize>true</Optimize>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UncomplicatedRoleAndSoundSupported_Debug|AnyCPU'">
 		<DefineConstants>$(DefineConstants);UNCOMPLICATED_ROLE_SUPPORTED;SOUND_API_SUPPORTED;DEBUG</DefineConstants>
+		<Optimize>false</Optimize>
 	</PropertyGroup>
 
 

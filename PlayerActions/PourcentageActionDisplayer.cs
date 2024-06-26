@@ -26,7 +26,6 @@ public class PourcentageActionDisplayer : IProgressActionDisplayer
     public void ShowLoading(Player player, float progress, float duration)
     {
         string message = Regex.Replace(ProgressMessage, "%progress%", Math.Ceiling(progress).ToString(), RegexOptions.IgnoreCase);
-
         if (UseBroadcast)
         {
             player.Broadcast(
