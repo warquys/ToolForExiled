@@ -1,9 +1,7 @@
 ﻿using System;
-using Exiled.CustomRoles.API;
-using Exiled.CustomRoles.API.Features;
 using PlayerRoles;
-using ExCustomRole = Exiled.CustomRoles.API.Features.CustomRole;
-using Exiled.CustomRoles;
+using ExCustomRole = Exiled.CustomModules.API.Features.CustomRoles.CustomRole;
+using ExPlayerExtensions = Exiled.CustomModules.API.Extensions.PlayerExtensions;
 
 #if UNCOMPLICATED_ROLE_SUPPORTED
 using UncomplicatedCustomRoles.API.Features;
@@ -25,14 +23,15 @@ public record struct RoleInformation(RoleTypeSystem RoleSystem, uint RoleId)
 
     public RoleInformation(RoleTypeId roleTypeId) : this(RoleTypeSystem.Vanilla, unchecked((uint)roleTypeId)) { }
 
-    public void SetRole(Player player)
+    public void SetRole(Player player, params object[] complementaryInfo)
     {
         if (player == null) return;
 
-        var customRoles = player.GetCustomRoles();
+        var extractor = new Extractor<object>();
+        var customRoles = ExPlayerExtensions.Get(player);
         
-        foreach (var exiledCustomRole in customRoles)
-            exiledCustomRole.RemoveRole(player);
+        //foreach (var exiledCustomRole in customRoles)
+        //    exiledCustomRole.RemoveRole(player);
 
         switch (RoleSystem)
         {
@@ -47,7 +46,13 @@ public record struct RoleInformation(RoleTypeSystem RoleSystem, uint RoleId)
                     return;
                 }
 
-                role.AddRole(player);
+                extractor.AddSource(complementaryInfo)
+                    .AddExtraction<RoleSpawnFlags>(out var roleSpawnFlag, RoleSpawnFlags.All)
+                    .AddExtraction<SpawnReason>(out var spawnReason, null)
+                    .AddExtraction<KeepPosition>(out var shouldKeepPosition, KeepPosition.No)
+                    .Extract();
+
+                ExPlayerExtensions.Spawn(player, role, KeepPosition.Yes == shouldKeepPosition, spawnReason, roleSpawnFlag);
                 break;
 
 #if UNCOMPLICATED_ROLE_SUPPORTED
@@ -74,8 +79,8 @@ public record struct RoleInformation(RoleTypeSystem RoleSystem, uint RoleId)
                 return unchecked((uint)player.Role.Type) == RoleId;
 
             case RoleTypeSystem.CustomRolesExiled when hasCustomRole ?? true:
-                if (ExCustomRole.TryGet(RoleId, out var role) && role != null)
-                    return role.Check(player);
+                if (ExPlayerExtensions.TryGet(player, out var playerRole) && playerRole.Id == RoleId)
+                    return true;
                 goto default;
 
 #if UNCOMPLICATED_ROLE_SUPPORTED
@@ -96,6 +101,12 @@ public record struct RoleInformation(RoleTypeSystem RoleSystem, uint RoleId)
     {
         return $"{RoleSystem}, {RoleId}";
     }
+
+    enum KeepPosition
+    {
+        No = 0,
+        Yes = 1
+    }
 }
 
 public static class CustomRoleExtension
@@ -104,7 +115,7 @@ public static class CustomRoleExtension
     // JUSTE EDIT THIS TO SAY IF YES OR NO THE PLAYER AVE A CUSTOME ROLE.
     public static bool HasCustomRole(this Player player)
     {
-        var hasExile = ExCustomRole.Registered.Any(p => p.Check(player));
+        var hasExile = ExCustomRole.TryGet(player, out _);
         if (hasExile) return true;
 
 #if UNCOMPLICATED_ROLE_SUPPORTED

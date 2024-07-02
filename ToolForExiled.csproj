@@ -34,7 +34,7 @@
 	<Import Project="..\global.props" />
 
 	<ItemGroup>
-		<PackageReference Update="EXILED" Version="8.9.4" />
+		<PackageReference Update="EXILED" Version="9.0.0-alpha.2" />
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UncomplicatedRoleSupported_Release|AnyCPU'">
