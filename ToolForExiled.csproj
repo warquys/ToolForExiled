@@ -31,7 +31,13 @@
 
 	</ItemGroup>
 
-	<Import Project="..\global.props" />
+	<PropertyGroup>
+		<ParentGlobalPropsPath>..\global.props</ParentGlobalPropsPath>
+		<CurrentGlobalPropsPath>.\global.props</CurrentGlobalPropsPath>
+	</PropertyGroup>
+
+	<Import Project="$(ParentGlobalPropsPath)" Condition="Exists($(ParentGlobalPropsPath))" />
+	<Import Project="$(CurrentGlobalPropsPath)" Condition="!Exists($(ParentGlobalPropsPath)) And Exists($(CurrentGlobalPropsPath))" />
 
 	<ItemGroup>
 		<PackageReference Update="EXILED" Version="8.9.8" />
