@@ -9,6 +9,7 @@ public class Translation : ITranslation
     public string YourNotPlayer { get; set; } = "You are not a player.";
     public string NotPlayer { get; set; } = "That is not a player.";
     public string PlayerNotFound { get; set; } = "Impossible to find: %player%.";
+    public string CoolDown { get; set; } = "In cooldown, you need to wait %time% seconds.";
 
     [Description("By default the vanila SCP name are handles. ")]
     public List<RoleName> RoleName { get; set; } = new List<RoleName>()

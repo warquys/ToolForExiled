@@ -9,7 +9,7 @@ public class Extractor<TSource>
 
     public Extractor<TSource> AddSource(IEnumerable<TSource> source)
     {
-        sources = sources.Union(source);
+        sources = sources.Concat(source);
         return this;
     }
 
@@ -29,7 +29,6 @@ public class Extractor<TSource>
     private IEnumerable<TSource> GetExtraction<TResult>(IEnumerable<TSource> source, Action<TResult> set, TResult @default, bool remove)
     {
         bool isSet = false;
-
         foreach (var item in source)
         {
             if (!isSet && item is TResult result)
