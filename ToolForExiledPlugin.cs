@@ -71,9 +71,7 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
 
     public ToolForExiledPlugin()
     {
-        Assembly = typeof(ToolForExiledPlugin).Assembly;
         Instance = this;
-        InternalTranslation = new Translation();
     }
 
     public List<IRestable> Restables { get; } = [];
