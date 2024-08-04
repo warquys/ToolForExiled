@@ -4,7 +4,7 @@
 		<Title>ToolForExiled</Title>
 		<AssemblyName>$(Title)</AssemblyName>
 		<Product>Tool For Exiled</Product>
-		<Version>1.3.0</Version>
+		<Version>1.3.1</Version>
 		<RepositoryUrl>https://github.com/warquys/OneZeroPlugins</RepositoryUrl>
 
 		<Authors>VT</Authors>
@@ -16,6 +16,7 @@
 		<DebugType>embedded</DebugType>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<Configurations>Debug;Release;UncomplicatedRoleSupported_Release;UncomplicatedRoleSupported_Debug;SoundSupported_Release;SoundSupported_Debug;UncomplicatedRoleAndSoundSupported_Release;UncomplicatedRoleAndSoundSupported_Debug</Configurations>
+		<DefineConstants>$(DefineConstants);NEW_EXILED</DefineConstants>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -30,7 +31,7 @@
 		<Reference Include="AudioPlayer" HintPath="..\Ref\SCPSLAudioApi.dll" Condition="$(DefineConstants.Contains(SOUND_API_SUPPORTED))" />
 
 	</ItemGroup>
-
+	
 	<PropertyGroup>
 		<ParentGlobalPropsPath>..\global.props</ParentGlobalPropsPath>
 		<CurrentGlobalPropsPath>.\global.props</CurrentGlobalPropsPath>
@@ -40,7 +41,7 @@
 	<Import Project="$(CurrentGlobalPropsPath)" Condition="!Exists($(ParentGlobalPropsPath)) And Exists($(CurrentGlobalPropsPath))" />
 
 	<ItemGroup>
-		<PackageReference Update="EXILED" Version="8.9.8" />
+		<PackageReference Update="EXILED" Version="9.0.0-alpha.19" />
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UncomplicatedRoleSupported_Release|AnyCPU'">

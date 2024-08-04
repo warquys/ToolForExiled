@@ -2,13 +2,13 @@
 using PlayerRoles;
 using Exiled.API.Features.Roles;
 using PluginAPI.Core;
-using Exiled.CustomItems.API.Features;
 
 #if NEW_EXILED
 using Exiled.CustomModules.API.Features.CustomItems;
 using ExCustomItem = Exiled.CustomModules.API.Features.CustomItems.CustomItem;
 using ExItemExtensions = Exiled.CustomModules.API.Extensions.ItemExtensions;
 #else
+using Exiled.CustomItems.API.Features;
 using Exiled.CustomRoles.API;
 using Exiled.CustomRoles.API.Features;
 using ExCustomRole = Exiled.CustomRoles.API.Features.CustomRole;
