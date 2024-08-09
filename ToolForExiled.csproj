@@ -16,7 +16,7 @@
 		<DebugType>embedded</DebugType>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<Configurations>Debug;Release;UncomplicatedRoleSupported_Release;UncomplicatedRoleSupported_Debug;SoundSupported_Release;SoundSupported_Debug;UncomplicatedRoleAndSoundSupported_Release;UncomplicatedRoleAndSoundSupported_Debug</Configurations>
-		<DefineConstants>$(DefineConstants);NEW_EXILED</DefineConstants>
+		<!--<DefineConstants>$(DefineConstants);NEW_EXILED</DefineConstants>-->
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -41,7 +41,7 @@
 	<Import Project="$(CurrentGlobalPropsPath)" Condition="!Exists($(ParentGlobalPropsPath)) And Exists($(CurrentGlobalPropsPath))" />
 
 	<ItemGroup>
-		<PackageReference Update="EXILED" Version="9.0.0-alpha.19" />
+		<PackageReference Update="EXILED" Version="8.9.11" />
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UncomplicatedRoleSupported_Release|AnyCPU'">
