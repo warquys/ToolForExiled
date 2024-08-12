@@ -45,7 +45,7 @@ public record struct RoleInformation(RoleTypeSystem RoleSystem, uint RoleId)
         switch (RoleSystem)
         {
             case RoleTypeSystem.Vanilla:
-                player.Role.Set((RoleTypeId)RoleId, RoleSpawnFlags.All);
+                player.Role.Set(unchecked((RoleTypeId)RoleId), RoleSpawnFlags.All);
                 break;
 
             case RoleTypeSystem.CustomRolesExiled:
