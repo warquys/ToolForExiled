@@ -86,7 +86,14 @@ public record struct RoleInformation(RoleTypeSystem RoleSystem, uint RoleId)
 
         switch (RoleSystem)
         {
-            case RoleTypeSystem.Vanila when !(hasCustomRole ?? player.HasCustomRole()):
+            case RoleTypeSystem.Vanila:
+
+                if (hasCustomRole == true)
+                    return false; 
+
+                if (hasCustomRole == null && player.HasCustomRole())
+                    return false;
+                
                 if (player.Role.Type < 0) return false;
                 return unchecked((uint)player.Role.Type) == RoleId;
 
@@ -147,10 +154,21 @@ public static class CustomRoleExtension
         return false;
     }
     
+    public static bool IsValid(this IEnumerable<RoleInformation> roles, Player player, bool hasCustomRole)
+    {
+        return roles.Any(p => p.IsValid(player, hasCustomRole));
+    }
+
     public static bool IsValid(this IEnumerable<RoleInformation> roles, Player player)
     {
         var hasCustomRole = player.HasCustomRole();
         return roles.Any(p => p.IsValid(player, hasCustomRole));
+    }
+
+    public static bool IsValid(this IEnumerable<RoleInformation> roles, Player player, bool hasCustomRole, out RoleInformation role)
+    {
+        role = roles.FirstOrDefault(p => p.IsValid(player, hasCustomRole));
+        return role != default;
     }
 
     public static bool IsValid(this IEnumerable<RoleInformation> roles, Player player, out RoleInformation role)
