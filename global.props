@@ -86,8 +86,4 @@
 			<WriteLinesToFile Lines="$(GeneratedMetaDataClass)" File="$(GeneratedFilePath)" WriteOnlyWhenDifferent="true" Overwrite="true" />
 		</Target>
 
-		<ItemGroup>
-			<PackageReference Include="EXILED" Version="8.7.0" />
-			<PackageReference Include="Lib.Harmony" Version="2.2.2" />
-	</ItemGroup>
 </Project>
