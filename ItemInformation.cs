@@ -35,7 +35,14 @@ public record struct ItemInformation(ItemTypeSystem ItemSystem, uint ItemId)
 
         switch (ItemSystem)
         {
-            case ItemTypeSystem.Vanila when !(isCustomItem ?? item.IsCustom()):
+            case ItemTypeSystem.Vanila:
+
+                if (isCustomItem == true)
+                    return false;
+
+                if (isCustomItem == null && item.IsCustom())
+                    return false;
+
                 if (item.Type < 0) return false;
                 return unchecked((uint)item.Type) == ItemId;
 

@@ -1,4 +1,5 @@
 ﻿using Discord;
+using UnityEngine;
 
 namespace ToolForExiled;
 
@@ -9,7 +10,10 @@ public class Extractor<TSource>
 
     public Extractor<TSource> AddSource(IEnumerable<TSource> source)
     {
-        sources = sources.Concat(source);
+        if (sources == null)
+            sources = source;
+        else if (source != null)
+            sources = sources.Concat(source);
         return this;
     }
 
@@ -20,10 +24,10 @@ public class Extractor<TSource>
         return this;
     }
 
-    public void Extract()
+    public void Execute()
     {
-        var enumerator = sources.GetEnumerator();
-        while (enumerator.MoveNext());
+        var parse = sources.GetEnumerator();
+        while (parse.MoveNext());
     }
 
     private IEnumerable<TSource> GetExtraction<TResult>(IEnumerable<TSource> source, Action<TResult> set, TResult @default, bool remove)
@@ -31,16 +35,24 @@ public class Extractor<TSource>
         bool isSet = false;
         foreach (var item in source)
         {
-            if (!isSet && item is TResult result)
+            try
             {
-                set(result);
-                isSet = true;
-                if (remove) continue;
+                if (!isSet && item is TResult result)
+                {
+                    set(result);
+                    isSet = true;
+                    if (remove) continue;
+                }
             }
-            
+            catch (Exception e)
+            {
+                Log.Error($"Error when extracting values {e}");
+            }
+
             yield return item;
         }
-        set(@default);
+        if (!isSet)
+            set(@default);
     }
 }
 

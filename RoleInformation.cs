@@ -33,39 +33,46 @@ public record struct RoleInformation(RoleTypeSystem RoleSystem, uint RoleId)
 
     public void SetRole(Player player, params object[] complementaryInfo)
     {
-        if (player == null) return;
-
-        var extractor = new Extractor<object>();
-#if !NEW_EXILED
-        var customRoles = player.GetCustomRoles();
-        foreach (var exiledCustomRole in customRoles)
-            exiledCustomRole.RemoveRole(player);
-#endif
-
-        switch (RoleSystem)
+        try
         {
-            case RoleTypeSystem.Vanilla:
-                player.Role.Set(unchecked((RoleTypeId)RoleId), RoleSpawnFlags.All);
-                break;
+            if (player == null) return;
 
-            case RoleTypeSystem.CustomRolesExiled:
-                if (!ExCustomRole.TryGet(RoleId, out var role) || role == null)
-                {
-                    Log.Warn($"Role {RoleId} not found.");
-                    return;
-                }
-#if NEW_EXILED
-                extractor.AddSource(complementaryInfo)
-                    .AddExtraction<RoleSpawnFlags>(out var roleSpawnFlag, RoleSpawnFlags.All)
-                    .AddExtraction<SpawnReason>(out var spawnReason, SpawnReason.None)
-                    .AddExtraction<KeepPosition>(out var shouldKeepPosition, KeepPosition.No)
-                    .Extract();
-
-                ExPlayerExtensions.Spawn(player, role, KeepPosition.Yes == shouldKeepPosition, spawnReason, roleSpawnFlag);
-#else
-                role.AddRole(player);
+            var extractor = new Extractor<object>();
+#if !NEW_EXILED
+            var customRoles = player.GetCustomRoles();
+            foreach (var exiledCustomRole in customRoles)
+                exiledCustomRole.RemoveRole(player);
 #endif
-                break;
+
+            switch (RoleSystem)
+            {
+                case RoleTypeSystem.Vanilla:
+                    extractor.AddSource(complementaryInfo)
+                        .AddExtraction<RoleSpawnFlags>(out var roleSpawnFlag, RoleSpawnFlags.All)
+                        .AddExtraction<SpawnReason>(out var spawnReason, SpawnReason.ForceClass)
+                        .Execute();
+
+                    player.Role.Set(unchecked((RoleTypeId)RoleId), spawnReason, roleSpawnFlag);
+                    break;
+
+                case RoleTypeSystem.CustomRolesExiled:
+                    if (!ExCustomRole.TryGet(RoleId, out var role) || role == null)
+                    {
+                        Log.Warn($"Role {RoleId} not found.");
+                        return;
+                    }
+#if NEW_EXILED
+                    extractor.AddSource(complementaryInfo)
+                        .AddExtraction<RoleSpawnFlags>(out var roleSpawnFlag, RoleSpawnFlags.All)
+                        .AddExtraction<SpawnReason>(out var spawnReason, SpawnReason.None)
+                        .AddExtraction<KeepPosition>(out var shouldKeepPosition, KeepPosition.No)
+                        .Extract();
+
+                    ExPlayerExtensions.Spawn(player, role, KeepPosition.Yes == shouldKeepPosition, spawnReason, roleSpawnFlag);
+#else
+                    role.AddRole(player);
+#endif
+                    break;
 
 #if UNCOMPLICATED_ROLE_SUPPORTED
             case RoleTypeSystem.UncomplicatedCustomRole:
@@ -73,11 +80,20 @@ public record struct RoleInformation(RoleTypeSystem RoleSystem, uint RoleId)
                 break;
 #endif
 
-            // where add you code to spawn the role...
+                // where add you code to spawn the role...
 
-            default:
-                break;
+                default:
+                    break;
+            }
         }
+        catch (Exception)
+        {
+            Log.Error($@"Exception raised when trying to set a role:
+Type {RoleSystem}
+Id {RoleId}");
+            throw;
+        }
+       
     }
 
     public bool IsValid(Player player, bool? hasCustomRole = null)
