@@ -35,7 +35,7 @@ public record struct RoleInformation(RoleTypeSystem RoleSystem, uint RoleId)
     {
         try
         {
-            if (player == null) return;
+            if (!player.IsValid()) return;
 
             var extractor = new Extractor<object>();
 #if !NEW_EXILED
@@ -47,12 +47,20 @@ public record struct RoleInformation(RoleTypeSystem RoleSystem, uint RoleId)
             switch (RoleSystem)
             {
                 case RoleTypeSystem.Vanilla:
+#if !NEW_EXILED
                     extractor.AddSource(complementaryInfo)
                         .AddExtraction<RoleSpawnFlags>(out var roleSpawnFlag, RoleSpawnFlags.All)
                         .AddExtraction<SpawnReason>(out var spawnReason, SpawnReason.ForceClass)
                         .Execute();
-
+                    
                     player.Role.Set(unchecked((RoleTypeId)RoleId), spawnReason, roleSpawnFlag);
+#else
+                    extractor.AddSource(complementaryInfo)
+                        .AddExtraction<RoleSpawnFlags>(out var vanillaRoleSpawnFlag, RoleSpawnFlags.All)
+                        .AddExtraction<RoleChangeReason>(out var vanillaSpawnReason, SpawnReason.ForceClass)
+                        .Execute();
+                    player.Role.Set(unchecked((RoleTypeId)RoleId), vanillaSpawnReason, vanillaRoleSpawnFlag);
+#endif
                     break;
 
                 case RoleTypeSystem.CustomRolesExiled:
@@ -66,7 +74,7 @@ public record struct RoleInformation(RoleTypeSystem RoleSystem, uint RoleId)
                         .AddExtraction<RoleSpawnFlags>(out var roleSpawnFlag, RoleSpawnFlags.All)
                         .AddExtraction<SpawnReason>(out var spawnReason, SpawnReason.None)
                         .AddExtraction<KeepPosition>(out var shouldKeepPosition, KeepPosition.No)
-                        .Extract();
+                        .Execute();
 
                     ExPlayerExtensions.Spawn(player, role, KeepPosition.Yes == shouldKeepPosition, spawnReason, roleSpawnFlag);
 #else
@@ -98,7 +106,7 @@ Id {RoleId}");
 
     public bool IsValid(Player player, bool? hasCustomRole = null)
     {
-        if (player == null) return false;
+        if (!player.IsValid()) return false;
 
         switch (RoleSystem)
         {
