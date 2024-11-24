@@ -1,7 +1,6 @@
 ﻿using Exiled.API.Features.Items;
 using PlayerRoles;
 using Exiled.API.Features.Roles;
-using PluginAPI.Core;
 
 #if NEW_EXILED
 using Exiled.CustomModules.API.Features.CustomItems;
@@ -9,10 +8,8 @@ using ExCustomItem = Exiled.CustomModules.API.Features.CustomItems.CustomItem;
 using ExItemExtensions = Exiled.CustomModules.API.Extensions.ItemExtensions;
 #else
 using Exiled.CustomItems.API.Features;
-using Exiled.CustomRoles.API;
-using Exiled.CustomRoles.API.Features;
-using ExCustomRole = Exiled.CustomRoles.API.Features.CustomRole;
-using Exiled.CustomRoles;
+using ExCustomItem = Exiled.CustomItems.API.Features.CustomItem;
+using ExItemExtensions = Exiled.CustomItems.API.Extensions;
 #endif
 
 namespace ToolForExiled;
@@ -27,6 +24,55 @@ public record struct ItemInformation(ItemTypeSystem ItemSystem, uint ItemId)
     public ItemInformation() : this(ItemTypeSystem.Vanilla, 0) { }
 
     public ItemInformation(ItemType itemTypeId) : this(ItemTypeSystem.Vanilla, unchecked((uint)itemTypeId)) { }
+
+    public void GiveItem(Player player, params object[] complementaryInfo)
+    {
+        try
+        {
+            if (!player.IsValid()) return;
+
+            var extractor = new Extractor<object>();
+
+            switch (ItemSystem)
+            {
+                case ItemTypeSystem.Vanilla:
+
+                    player.AddItem(unchecked((ItemType)ItemId));
+                    break;
+
+                case ItemTypeSystem.CustomItemsExiled:
+                    if (!ExCustomItem.TryGet(ItemId, out var item))
+                    {
+                        Log.Warn($"Item {ItemId} not found.");
+                        return;
+                    }
+
+#if !NEW_EXILED
+                    extractor.AddSource(complementaryInfo)
+                        .AddExtraction<DisplayMessage>(out var displayMessage, DisplayMessage.No)
+                        .Execute();
+
+                    item.Give(player, DisplayMessage.Yes == displayMessage);
+#else 
+                    // TODO: New Exiled
+                    throw new NotImplementedException("This code is not compatible with the new Exiled version.");
+#endif
+                    break;
+
+                // where add you code to give the item...
+
+                default:
+                    break;
+            }
+        }
+        catch (Exception)
+        {
+            Log.Error($@"Exception raised when trying to give an item:
+Type {ItemSystem}
+Id {ItemId}");
+            throw;
+        }
+    }
 
 
     public bool IsValid(Item item, bool? isCustomItem = null)
@@ -63,6 +109,11 @@ public record struct ItemInformation(ItemTypeSystem ItemSystem, uint ItemId)
         }
     }
 
+    enum DisplayMessage
+    {
+        No = 0,
+        Yes = 1
+    }
 }
 
 public static class CustomItemExtension

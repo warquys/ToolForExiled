@@ -4,13 +4,14 @@
 		<Title>ToolForExiled</Title>
 		<AssemblyName>$(Title)</AssemblyName>
 		<Product>Tool For Exiled</Product>
-		<Version>1.4.0</Version>
+		<Version>1.4.1</Version>
 		<RepositoryUrl>https://github.com/warquys/OneZeroPlugins</RepositoryUrl>
 
 		<Authors>VT</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 
 		<TargetFramework>net481</TargetFramework>
+		<Platforms>AnyCPU</Platforms>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<LangVersion>latest</LangVersion>
 		<DebugType>embedded</DebugType>

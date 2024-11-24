@@ -100,6 +100,10 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
         if (_soundAnnoncer == null || _soundAnnoncer.ReferenceHub == null)
             return;
 
+        if (!AudioPlayerBase.AudioPlayers.TryGetValue(_soundAnnoncer.ReferenceHub, out var myBase)
+            || myBase != playerBase)
+            return;
+
         _soundAnnoncer.Destroy();
         _soundAnnoncer = null;
     }

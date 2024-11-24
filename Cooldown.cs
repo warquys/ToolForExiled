@@ -9,7 +9,7 @@ namespace ToolForExiled;
 public class CoolDown : IEnumerator<float>
 {
     internal float _coolDownTime;
-    internal CoroutineHandle _coroutineHandler;
+    internal CoroutineHandle _coroutineHandler = default;
 
     public float Duration { get; }
     public bool IsActive => CurrentCooldown > 0;
