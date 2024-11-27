@@ -50,6 +50,10 @@
 		<PackageReference Update="EXILED" Version="8.9.11" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="NewFolder\" />
+	</ItemGroup>
+
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UncomplicatedRoleSupported_Release|AnyCPU'">
 		<DefineConstants>$(DefineConstants);UNCOMPLICATED_ROLE_SUPPORTED</DefineConstants>
 		<Optimize>true</Optimize>

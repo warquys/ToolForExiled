@@ -6,10 +6,12 @@ namespace ToolForExiled.PlayerActions;
 
 public class PourcentageActionDisplayer : IProgressActionDisplayer
 {
+    public const string progress_Pattern = "%progress%";
+
     [Description("If false, hint will be use.")]
     public bool UseBroadcast { get; set; } = true;
 
-    public string ProgressMessage { get; set; } = "%progress%";
+    public string ProgressMessage { get; set; } = $"{progress_Pattern}";
 
     public void ClearLoading(Player player)
     {
@@ -25,7 +27,8 @@ public class PourcentageActionDisplayer : IProgressActionDisplayer
 
     public void ShowLoading(Player player, float progress, float duration)
     {
-        string message = Regex.Replace(ProgressMessage, "%progress%", Math.Ceiling(progress).ToString(), RegexOptions.IgnoreCase);
+        string message = ProgressMessage;
+        ToolForExiledPlugin.Instance.IgnoreCaseReplaces(ref message, progress_Pattern, progress.ToString());
         if (UseBroadcast)
         {
             player.Broadcast(

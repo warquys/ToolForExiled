@@ -17,7 +17,7 @@ using System.Data;
 
 namespace ToolForExiled;
 
-public class ToolForExiledPlugin : Plugin<Config, Translation>
+public class ToolForExiledPlugin : Plugin<ToolForExiledConfig, ToolForExiledTranslation>
 {
     public const int IdForAudio = 840;
 
@@ -128,19 +128,18 @@ public class ToolForExiledPlugin : Plugin<Config, Translation>
         Restables.ForEach(p => p.Reset());
     }
 
-    public void Replaces(ref string str, params (string patern, object replacement)[] replacements)
+    public void IgnoreCaseReplaces<T>(ref string str, string pattern, T replacement)
     {
-        foreach ((string pattern, object replacement) in replacements)
-        {
-            str = str.Replace(pattern, replacement.ToString());
-        }
+        str = Regex.Replace(str, pattern, replacement.ToString(), RegexOptions.IgnoreCase);
     }
 
-    public void IgnoreCaseReplaces(ref string str, params (string pattern, object replacement)[] replacements)
+    public void IgnoreCaseReplaces(ref string str, params (string pattern, string replacement)[] replacements)
     {
-        foreach ((string pattern, object replacement) in replacements)
+        if (string.IsNullOrWhiteSpace(str)) return;
+
+        for (int i = 0; i < replacements.Length; i++)
         {
-            str = Regex.Replace(str, pattern, replacement.ToString(), RegexOptions.IgnoreCase);
+            IgnoreCaseReplaces(ref str, replacements[i].pattern, replacements[i].replacement);
         }
     }
 

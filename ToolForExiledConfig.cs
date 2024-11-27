@@ -1,6 +1,6 @@
 ﻿namespace ToolForExiled;
 
-public class Config : IConfig
+public class ToolForExiledConfig : IConfig
 {
     public bool IsEnabled { get => true; set { } }
     public bool Debug { get; set; }

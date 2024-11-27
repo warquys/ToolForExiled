@@ -33,7 +33,7 @@ public class CoolDown : IEnumerator<float>
         }
 
         message = ToolForExiledPlugin.Instance.Translation.CoolDown;
-        message = Regex.Replace(message, "%time%", CurrentCooldown.ToString(), RegexOptions.IgnoreCase);
+        ToolForExiledPlugin.Instance.IgnoreCaseReplaces(ref message, ToolForExiledTranslation.time_Pattern, CurrentCooldown.ToString());
         return true;
     }
 
