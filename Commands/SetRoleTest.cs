@@ -6,7 +6,6 @@ using PlayerRoles;
 namespace ToolForExiled.Commands;
 
 [CommandHandler(typeof(RemoteAdminCommandHandler))]
-[CommandHandler(typeof(GameConsoleCommandHandler))]
 public class SetRoleTest : ICommand
 {
     public string Command => "SetRoleTest";

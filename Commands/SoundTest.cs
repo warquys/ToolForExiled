@@ -7,7 +7,6 @@ using SCPSLAudioApi.AudioCore;
 namespace ToolForExiled.Commands;
 
 [CommandHandler(typeof(RemoteAdminCommandHandler))]
-[CommandHandler(typeof(GameConsoleCommandHandler))]
 public class SoundTest : ICommand
 {
     public string Command => "SoundTest";

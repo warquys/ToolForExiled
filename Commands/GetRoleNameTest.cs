@@ -5,7 +5,6 @@ using CommandSystem;
 namespace ToolForExiled.Commands;
 
 [CommandHandler(typeof(RemoteAdminCommandHandler))]
-[CommandHandler(typeof(GameConsoleCommandHandler))]
 public class GetRoleNameTest : ICommand
 {
     public string Command => "GetRoleNameTest";

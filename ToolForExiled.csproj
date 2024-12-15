@@ -32,10 +32,6 @@
 		<Reference Include="Pooling" HintPath="$(SL_REFERENCES)\Pooling.dll" />
 		<Reference Include="UnityEngine.PhysicsModule" HintPath="$(SL_REFERENCES)\UnityEngine.PhysicsModule.dll" />
 		<Reference Include="UnityEngine.CoreModule" HintPath="$(SL_REFERENCES)\UnityEngine.CoreModule.dll" />
-
-		<Reference Include="UncomplicatedCustomRoles" HintPath="..\Ref\UncomplicatedCustomRoles.dll" Condition="$(DefineConstants.Contains(UNCOMPLICATED_ROLE_SUPPORTED))" />
-		<Reference Include="AudioPlayer" HintPath="..\Ref\SCPSLAudioApi.dll" Condition="$(DefineConstants.Contains(SOUND_API_SUPPORTED))" />
-
 	</ItemGroup>
 	
 	<PropertyGroup>
@@ -56,34 +52,39 @@
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UncomplicatedRoleSupported_Release|AnyCPU'">
 		<DefineConstants>$(DefineConstants);UNCOMPLICATED_ROLE_SUPPORTED</DefineConstants>
-		<Optimize>true</Optimize>
 	</PropertyGroup>
-
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UncomplicatedRoleSupported_Debug|AnyCPU'">
 		<DefineConstants>$(DefineConstants);UNCOMPLICATED_ROLE_SUPPORTED;DEBUG</DefineConstants>
-		<Optimize>false</Optimize>
 	</PropertyGroup>
-
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='SoundSupported_Release|AnyCPU'">
 		<DefineConstants>$(DefineConstants);SOUND_API_SUPPORTED</DefineConstants>
-		<Optimize>true</Optimize>
 	</PropertyGroup>
-
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='SoundSupported_Debug|AnyCPU'">
 		<DefineConstants>$(DefineConstants);SOUND_API_SUPPORTED;DEBUG</DefineConstants>
-		<Optimize>false</Optimize>
 	</PropertyGroup>
-
-
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UncomplicatedRoleAndSoundSupported_Release|AnyCPU'">
 		<DefineConstants>$(DefineConstants);UNCOMPLICATED_ROLE_SUPPORTED;SOUND_API_SUPPORTED</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UncomplicatedRoleAndSoundSupported_Debug|AnyCPU'">
+		<DefineConstants>$(DefineConstants);UNCOMPLICATED_ROLE_SUPPORTED;SOUND_API_SUPPORTED;DEBUG</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'!='DEBUG'">
 		<Optimize>true</Optimize>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UncomplicatedRoleAndSoundSupported_Debug|AnyCPU'">
-		<DefineConstants>$(DefineConstants);UNCOMPLICATED_ROLE_SUPPORTED;SOUND_API_SUPPORTED;DEBUG</DefineConstants>
+
+	<PropertyGroup Condition="'$(Configuration)'=='DEBUG'">
 		<Optimize>false</Optimize>
 	</PropertyGroup>
 
+	<ItemGroup Condition="'$(Configuration)'=='UNCOMPLICATED_ROLE_SUPPORTED'">
+		<Reference Include="UncomplicatedCustomRoles" HintPath="..\Ref\UncomplicatedCustomRoles.dll" Condition="$(DefineConstants.Contains(UNCOMPLICATED_ROLE_SUPPORTED))" />
+	</ItemGroup>
 
+
+	<ItemGroup Condition="'$(Configuration)'=='SOUND_API_SUPPORTED'">
+		<Reference Include="AudioPlayer" HintPath="..\Ref\SCPSLAudioApi.dll" Condition="$(DefineConstants.Contains(SOUND_API_SUPPORTED))" />
+	</ItemGroup>
+		
 </Project>
