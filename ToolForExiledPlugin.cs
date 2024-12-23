@@ -35,7 +35,7 @@ public class ToolForExiledPlugin : Plugin<ToolForExiledConfig, ToolForExiledTran
         { 
             if (_soundAnnoncer == null || _soundAnnoncer.ReferenceHub == null)
             {
-                _soundAnnoncer = Npc.Spawn(Config.AnnoncerName, RoleTypeId.Spectator, userId: "Annoncer@ToolForExiled");
+                _soundAnnoncer = Npc.Spawn(Config.AnnoncerName, RoleTypeId.Spectator);
                 Player.Dictionary.Remove(_soundAnnoncer.GameObject);
                 ReferenceHub.AllHubs.Remove(_soundAnnoncer.ReferenceHub);
                 _soundAnnoncer.RemoteAdminPermissions = PlayerPermissions.AFKImmunity;

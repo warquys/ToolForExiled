@@ -21,7 +21,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="EXILED" />
+	  <PackageReference Include="ExMod.Exiled" Version="9.0.1" />
 	  <PackageReference Include="Lib.Harmony" Version="2.2.2" />
 	</ItemGroup>
 
@@ -32,6 +32,8 @@
 		<Reference Include="Pooling" HintPath="$(SL_REFERENCES)\Pooling.dll" />
 		<Reference Include="UnityEngine.PhysicsModule" HintPath="$(SL_REFERENCES)\UnityEngine.PhysicsModule.dll" />
 		<Reference Include="UnityEngine.CoreModule" HintPath="$(SL_REFERENCES)\UnityEngine.CoreModule.dll" />
+		<Reference Include="AudioPlayer" HintPath="..\Ref\SCPSLAudioApi.dll" Condition="$(DefineConstants.Contains(SOUND_API_SUPPORTED))" />
+		<Reference Include="UncomplicatedCustomRoles" HintPath="..\Ref\UncomplicatedCustomRoles.dll" Condition="$(DefineConstants.Contains(UNCOMPLICATED_ROLE_SUPPORTED))" />
 	</ItemGroup>
 	
 	<PropertyGroup>
@@ -73,18 +75,9 @@
 		<Optimize>true</Optimize>
 	</PropertyGroup>
 
-
 	<PropertyGroup Condition="'$(Configuration)'=='DEBUG'">
 		<Optimize>false</Optimize>
 	</PropertyGroup>
 
-	<ItemGroup Condition="'$(Configuration)'=='UNCOMPLICATED_ROLE_SUPPORTED'">
-		<Reference Include="UncomplicatedCustomRoles" HintPath="..\Ref\UncomplicatedCustomRoles.dll" Condition="$(DefineConstants.Contains(UNCOMPLICATED_ROLE_SUPPORTED))" />
-	</ItemGroup>
-
-
-	<ItemGroup Condition="'$(Configuration)'=='SOUND_API_SUPPORTED'">
-		<Reference Include="AudioPlayer" HintPath="..\Ref\SCPSLAudioApi.dll" Condition="$(DefineConstants.Contains(SOUND_API_SUPPORTED))" />
-	</ItemGroup>
 		
 </Project>

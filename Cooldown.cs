@@ -9,7 +9,6 @@ namespace ToolForExiled;
 public class CoolDown : IEnumerator<float>
 {
     internal float _coolDownTime;
-    internal CoroutineHandle _coroutineHandler = default;
 
     public float Duration { get; }
     public bool IsActive => CurrentCooldown > 0;
@@ -37,6 +36,10 @@ public class CoolDown : IEnumerator<float>
         return true;
     }
 
+    /// <summary>
+    /// Use as <see langword="yield"/> <see langword="return"/> value for coroutine.
+    /// </summary>
+    public float WaitEnd() => _coolDownTime;
 
     public void Start()
     {
@@ -45,7 +48,6 @@ public class CoolDown : IEnumerator<float>
 
     public void Reset()
     {
-        Timing.KillCoroutines(_coroutineHandler);
         _coolDownTime = 0;
     }
 
