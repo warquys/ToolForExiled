@@ -7,6 +7,9 @@ namespace ToolForExiled.PlayerActions;
 public class LongAction
 {
     const float NetworkOffset = 0.5f;
+    const float MinTimeBetweenFrame = 1f;
+
+    private float LastDisplay = 0;
 
     /// <summary>
     /// Min 0, Max 100
@@ -32,11 +35,15 @@ public class LongAction
         Log.Info($"TotalSlice*TimeForEachSlice {TotalSlice * TimeForEachSlice}");
 #endif
         Player = player;
+        LastDisplay = Timing.LocalTime - (MinTimeBetweenFrame * 2);
     }
 
     public void StartAction()
     {
-        Timing.RunCoroutine(ActionCoroutine(), ToolForExiledPlugin.RoundRest_CoroutineTag);
+        Timing.RunCoroutine(ActionCoroutine().RerouteExceptions(ex =>
+        {
+            Log.Error($"Failed long action of {ex}, {Player}.");
+        }), ToolForExiledPlugin.RoundRest_CoroutineTag);
     }
 
     private IEnumerator<float> ActionCoroutine()
@@ -45,17 +52,22 @@ public class LongAction
         {
             Progress = (i / (float)TotalSlice) * 100;
 
-            try
-            {
-                ProgressActionShower?.ShowLoading(Player, Progress, TimeForEachSlice + NetworkOffset);
-            }
-            catch (Exception e)
-            {
-                Log.Error(e);
+            if (LastDisplay + MinTimeBetweenFrame < Timing.LocalTime)
+            { 
+                try
+                {
+                    LastDisplay = Timing.LocalTime;
+                    var time = Math.Max(MinTimeBetweenFrame, TimeForEachSlice) + NetworkOffset;
+                    ProgressActionShower?.ShowLoading(Player, Progress, time);
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e);
 #if DEBUG
                 Log.Error($"Progress {Progress}");
 #endif
-                throw;
+                    throw;
+                }
             }
 
             yield return Timing.WaitForSeconds(TimeForEachSlice);

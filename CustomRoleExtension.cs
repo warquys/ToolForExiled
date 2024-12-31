@@ -1,12 +1,6 @@
-﻿
-#if NEW_EXILED
-using ExCustomRole = Exiled.CustomModules.API.Features.CustomRoles.CustomRole;
-using ExPlayerExtensions = Exiled.CustomModules.API.Extensions.PlayerExtensions;
-#else
-using Exiled.API.Features.Pools;
+﻿using Exiled.API.Features.Pools;
 using Exiled.API.Features.Roles;
 using ExCustomRole = Exiled.CustomRoles.API.Features.CustomRole;
-#endif
 
 #if UNCOMPLICATED_ROLE_SUPPORTED
 using UncomplicatedCustomRoles.API.Features;
@@ -22,11 +16,7 @@ public static class CustomRoleExtension
     // JUSTE EDIT THIS TO SAY IF YES OR NO THE PLAYER AVE A CUSTOME ROLE.
     public static bool HasCustomRole(this Player player)
     {
-#if NEW_EXILED
-        var hasExile = ExCustomRole.TryGet(player, out _);
-#else
         var hasExile = ExCustomRole.Registered.Any(p => p.Check(player));
-#endif
         if (hasExile) return true;
 
 #if UNCOMPLICATED_ROLE_SUPPORTED

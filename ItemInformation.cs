@@ -1,16 +1,9 @@
 ﻿using Exiled.API.Features.Items;
 using PlayerRoles;
 using Exiled.API.Features.Roles;
-
-#if NEW_EXILED
-using Exiled.CustomModules.API.Features.CustomItems;
-using ExCustomItem = Exiled.CustomModules.API.Features.CustomItems.CustomItem;
-using ExItemExtensions = Exiled.CustomModules.API.Extensions.ItemExtensions;
-#else
 using Exiled.CustomItems.API.Features;
 using ExCustomItem = Exiled.CustomItems.API.Features.CustomItem;
 using ExItemExtensions = Exiled.CustomItems.API.Extensions;
-#endif
 
 namespace ToolForExiled;
 
@@ -47,16 +40,11 @@ public record struct ItemInformation(ItemTypeSystem ItemSystem, uint ItemId)
                         return;
                     }
 
-#if !NEW_EXILED
                     extractor.AddSource(complementaryInfo)
                         .AddExtraction<DisplayMessage>(out var displayMessage, DisplayMessage.No)
                         .Execute();
 
                     item.Give(player, DisplayMessage.Yes == displayMessage);
-#else 
-                    // TODO: New Exiled
-                    throw new NotImplementedException("This code is not compatible with the new Exiled version.");
-#endif
                     break;
 
                 // where add you code to give the item...
@@ -93,13 +81,10 @@ Id {ItemId}");
                 return unchecked((uint)item.Type) == ItemId;
 
             case ItemTypeSystem.CustomItemsExiled when isCustomItem ?? true:
-#if NEW_EXILED
-                if (ExItemExtensions.TryGet(item, out var customItem) && customItem.Id != ItemId)
-                    return true;
-#else
+                
                 if (CustomItem.TryGet(ItemId, out var customItem) && customItem != null)
                     return customItem.Check(item);
-#endif
+      
                 goto default;
 
             // where add you code to check if the item is use or not...
