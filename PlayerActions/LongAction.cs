@@ -7,8 +7,8 @@ namespace ToolForExiled.PlayerActions;
 public class LongAction
 {
     const float NetworkOffset = 0.5f;
-    const float MinTimeBetweenFrame = 1f;
 
+    private float MinTimeBetweenFrame => ToolForExiledPlugin.Instance.Config.MinTimeBetweenHint;
     private float LastDisplay = 0;
 
     /// <summary>
@@ -64,7 +64,7 @@ public class LongAction
                 {
                     Log.Error(e);
 #if DEBUG
-                Log.Error($"Progress {Progress}");
+                    Log.Error($"Progress {Progress}");
 #endif
                     throw;
                 }
