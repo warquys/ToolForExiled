@@ -1,4 +1,5 @@
-﻿using Exiled.API.Features.Pools;
+﻿using System.Data;
+using Exiled.API.Features.Pools;
 using Exiled.API.Features.Roles;
 using ExCustomRole = Exiled.CustomRoles.API.Features.CustomRole;
 
@@ -27,16 +28,20 @@ public static class CustomRoleExtension
         return false;
     }
     
+    // List use in Config are null if empty. :(
     public static bool IsValid(this IEnumerable<RoleInformation> roles, Player player, bool hasCustomRole)
-    {
-        return roles.Any(p => p.IsValid(player, hasCustomRole));
-    }
+        => roles?.Any(p => p.IsValid(player, hasCustomRole)) ?? false;
 
     public static bool IsValid(this IEnumerable<RoleInformation> roles, Player player)
         => roles.IsValid(player, player.HasCustomRole());
 
     public static bool IsValid(this IEnumerable<RoleInformation> roles, Player player, bool hasCustomRole, out RoleInformation role)
     {
+        if (roles == null)
+        {
+            role = default;
+            return false;
+        }
         role = roles.FirstOrDefault(p => p.IsValid(player, hasCustomRole));
         return role != default;
     }
@@ -62,6 +67,11 @@ public static class CustomRoleExtension
     public static bool FirstRolesValid<T>(this IEnumerable<T> restraineds, Player player, bool hasCustomRole, out T valid)
         where T : IRolesRestrained
     {
+        if (restraineds == null)
+        {
+            valid = default;
+            return false;
+        }
         foreach (var restrained in restraineds)
         {
             if (restrained.IsValid(player, hasCustomRole))
@@ -81,6 +91,12 @@ public static class CustomRoleExtension
     public static bool FirstRolesValid<T>(this IEnumerable<T> restraineds, Player player, bool hasCustomRole, out T valid, out RoleInformation role)
         where T : IRolesRestrained
     {
+        if (restraineds == null)
+        {
+            valid = default;
+            role = default;
+            return false;
+        }
         foreach (var restrained in restraineds)
         {
             if (restrained.IsValid(player, hasCustomRole, out role))
@@ -101,6 +117,11 @@ public static class CustomRoleExtension
     public static bool FirstRoleValid<T>(this IEnumerable<T> restraineds, Player player, bool hasCustomRole, out T valid)
         where T : IRoleRestrained
     {
+        if (restraineds == null)
+        {
+            valid = default;
+            return false;
+        }
         foreach (var restrained in restraineds)
         {
             if (restrained.IsValid(player, hasCustomRole))
@@ -120,6 +141,12 @@ public static class CustomRoleExtension
     public static bool FirstRoleValid<T>(this IEnumerable<T> restraineds, Player player, bool hasCustomRole, out T valid, out RoleInformation role)
         where T : IRoleRestrained
     {
+        if (restraineds == null)
+        {
+            role = default;
+            valid = default;
+            return false;
+        }
         foreach (var restrained in restraineds)
         {
             if (restrained.IsValid(player, hasCustomRole))
@@ -140,6 +167,9 @@ public static class CustomRoleExtension
 
     public static string GetInvalidMessage(this IEnumerable<RoleInformation> validsRoles)
     {
+        if (validsRoles == null) 
+            return ToolForExiledPlugin.Instance.Translation.NoneAllowedRoles;
+
         var message = ToolForExiledPlugin.Instance.Translation.AllowedRoles;
         var rolesNames = validsRoles.Select(GetName);
 

@@ -17,12 +17,18 @@ public static class CustomItemExtension
 
     public static bool IsValid(this IEnumerable<ItemInformation> items, Item item)
     {
+        if (items == null) return false;
         var isCustom = item.IsCustom();
         return items.Any(p => p.IsValid(item, isCustom));
     }
 
     public static bool IsValid(this IEnumerable<ItemInformation> items, Item item, out ItemInformation itemInfo)
     {
+        if (items == null)
+        {
+            itemInfo = default;
+            return false;
+        }
         var isCustom = item.IsCustom();
         itemInfo = items.FirstOrDefault(p => p.IsValid(item, isCustom));
         return itemInfo != default;

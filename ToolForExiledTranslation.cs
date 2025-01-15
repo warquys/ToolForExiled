@@ -17,6 +17,7 @@ public class ToolForExiledTranslation : ITranslation
     public string NotPlayer { get; set; } = "That is not a player.";
     public string PlayerNotFound { get; set; } = $"Impossible to find: {player_Pattern}.";
     public string CoolDown { get; set; } = $"In cooldown, you need to wait {time_Pattern} seconds.";
+    public string NoneAllowedRoles { get; set; } = $"Nobody can't do this... This command is disable."; 
     public string AllowedRoles { get; set; } = $"You can't do this... Allowed role(s) are: {roles_Pattern}.";
 
     [Description("By default the vanila SCP name are handles. ")]
