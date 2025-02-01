@@ -1,9 +1,6 @@
 ﻿using Exiled.API.Features.Items;
-using PlayerRoles;
-using Exiled.API.Features.Roles;
 using Exiled.CustomItems.API.Features;
 using ExCustomItem = Exiled.CustomItems.API.Features.CustomItem;
-using ExItemExtensions = Exiled.CustomItems.API.Extensions;
 
 namespace ToolForExiled;
 

@@ -12,6 +12,10 @@ public class ToolForExiledTranslation : ITranslation
     public const string roles_Pattern = "%roles%";
     public const string items_Pattern = "%items%";
 
+
+    public string ButtonEnable { get; set; } = "Yes";
+    public string ButtonDisable { get; set; } = "No";
+
     public string NoPermission { get; set; } = "You don't have the permissions.";
     public string YourNotPlayer { get; set; } = "You are not a player.";
     public string NotPlayer { get; set; } = "That is not a player.";

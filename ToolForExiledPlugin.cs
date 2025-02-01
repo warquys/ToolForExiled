@@ -1,19 +1,12 @@
 ﻿#if SOUND_API_SUPPORTED
 using SCPSLAudioApi.AudioCore;
 #endif
-using AdminToys;
-using CommandSystem;
-using CommandSystem.Commands.RemoteAdmin;
+using System.Text.RegularExpressions;
 using Exiled.API.Extensions;
-using Exiled.API.Features.Roles;
 using MEC;
 using PlayerRoles;
-using Utils.NonAllocLINQ;
+using UserSettings.ServerSpecific;
 using static NineTailedFoxAnnouncer;
-using System.Text.RegularExpressions;
-using Exiled.Events.Features;
-using System.Collections.Generic;
-using System.Data;
 
 namespace ToolForExiled;
 
@@ -24,36 +17,6 @@ public class ToolForExiledPlugin : Plugin<ToolForExiledConfig, ToolForExiledTran
     public const string CommandConfigPermission = "ConfigHelp";
 
     public const string RoundRest_CoroutineTag = "kill_at_rest_(waitinforplayer)";
-
-#if SOUND_API_SUPPORTED
-
-    private Npc _soundAnnoncer;
-
-    public Npc SoundAnnoncer
-    {
-        get 
-        { 
-            if (_soundAnnoncer == null || _soundAnnoncer.ReferenceHub == null)
-            {
-                _soundAnnoncer = Npc.Spawn(Config.AnnoncerName, RoleTypeId.Spectator);
-                Player.Dictionary.Remove(_soundAnnoncer.GameObject);
-                ReferenceHub.AllHubs.Remove(_soundAnnoncer.ReferenceHub);
-                _soundAnnoncer.RemoteAdminPermissions = PlayerPermissions.AFKImmunity;
-                var audio = AudioPlayerBase.Get(SoundAnnoncer.ReferenceHub);
-                audio.Continue = true;
-                audio.ShouldPlay = true;
-                audio.BroadcastChannel = VoiceChat.VoiceChatChannel.Intercom;
-                _soundAnnoncer.RankName = "Cassie";
-                _soundAnnoncer.RankColor = "light_green";
-            }
-            
-            return _soundAnnoncer; 
-        }
-        set { _soundAnnoncer = value; }
-    }
-
-
-#endif
 
     public static ToolForExiledPlugin Instance 
     { 
@@ -79,51 +42,18 @@ public class ToolForExiledPlugin : Plugin<ToolForExiledConfig, ToolForExiledTran
     public override void OnEnabled()
     {
         ServerEvents.WaitingForPlayers.Subscribe(Rest);
-#if SOUND_API_SUPPORTED
-        AudioPlayerBase.OnFinishedTrack += OnFinishTrack;
-#endif
         base.OnEnabled();
     }
 
     public override void OnDisabled()
     {
         ServerEvents.WaitingForPlayers.Unsubscribe(Rest);
-#if SOUND_API_SUPPORTED
-        AudioPlayerBase.OnFinishedTrack -= OnFinishTrack;
-#endif
         base.OnDisabled();
     }
-
-#if SOUND_API_SUPPORTED
-    public void OnFinishTrack(AudioPlayerBase playerBase, string track, bool directPlay, ref int nextQueuePos)
-    {
-        if (_soundAnnoncer == null || _soundAnnoncer.ReferenceHub == null)
-            return;
-
-        if (!AudioPlayerBase.AudioPlayers.TryGetValue(_soundAnnoncer.ReferenceHub, out var myBase)
-            || myBase != playerBase)
-            return;
-
-        _soundAnnoncer.Destroy();
-        _soundAnnoncer = null;
-    }
-#endif
 
     public void Rest()
     {
         Log.Debug("Rest, base on Waiting For Players");
-#if SOUND_API_SUPPORTED
-        Timing.CallDelayed(1f, () =>
-        {
-            try
-            {
-                if (_soundAnnoncer != null)
-                    _soundAnnoncer.Destroy();
-            }
-            catch { }
-        });
-        _soundAnnoncer = null;
-#endif
         Timing.KillCoroutines(RoundRest_CoroutineTag);
         Restables.ForEach(p => p.Reset());
     }
@@ -147,15 +77,6 @@ public class ToolForExiledPlugin : Plugin<ToolForExiledConfig, ToolForExiledTran
     {
         try
         {
-#if SOUND_API_SUPPORTED
-            if (!string.IsNullOrEmpty(soundMessage))
-            {
-                var audio = AudioPlayerBase.Get(SoundAnnoncer.ReferenceHub);    
-                audio.AudioToPlay.Add(soundMessage);
-                if (audio.CurrentPlay == null || audio.IsFinished)
-                    audio.Play(0);
-            }
-#endif
             if (!string.IsNullOrEmpty(message))
             {
                 if (!string.IsNullOrEmpty(translation))
@@ -167,19 +88,6 @@ public class ToolForExiledPlugin : Plugin<ToolForExiledConfig, ToolForExiledTran
         catch (Exception e)
         {
             Log.Error(e);
-#if SOUND_API_SUPPORTED
-            if (!string.IsNullOrEmpty(soundMessage) && SoundAnnoncer.ReferenceHub != null) try
-            {
-                var audio = AudioPlayerBase.Get(SoundAnnoncer.ReferenceHub);
-                var lastIndex = audio.AudioToPlay.Count - 1;
-                if (lastIndex >= 0 && audio.AudioToPlay[lastIndex] == soundMessage)
-                    audio.AudioToPlay.RemoveAt(lastIndex);
-                if (lastIndex == -1)
-                    audio.Stoptrack(false);
-            }
-            catch { }
-#endif
-
 #if DEBUG
             throw;
 #endif
@@ -212,12 +120,6 @@ public class ToolForExiledPlugin : Plugin<ToolForExiledConfig, ToolForExiledTran
         withoutSpace = "";
         withSpace = "";
         return;
-
-        // Other Role not convertible by default
-        /* switch (player.Role.Type)
-        {
-            
-        }*/
     }
 
     public void CassieConvertRoleName(Player player, out string withoutSpace, out string withSpace)

@@ -7,8 +7,9 @@ public class ToolForExiledConfig : IConfig
     public bool IsEnabled { get => true; set { } }
     public bool Debug { get; set; }
 
+    [Description("Only for sound api supported.")]
     public string AnnoncerName { get; set; } = "Cassie";
 
-    [Description("Use to avoid the rate limite of hint and broadcast")]
+    [Description("Use to avoid the rate limite of hint and broadcast.")]
     public float MinTimeBetweenHint { get; set; } = 1f;
 }
