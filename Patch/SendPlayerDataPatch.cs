@@ -62,15 +62,15 @@ public static class SendPlayerDataPatch
             foreach (var hub in ReferenceHub.AllHubs)
             {
                 if (hub.isLocalPlayer) continue;
-                var player = Player.Get(hub);
-                if (player.Role.Base is not IFpcRole fpcRole) continue;
-                if (player.NetId != receiver.netId)
+                var targetPlayer = Player.Get(hub);
+                if (targetPlayer.Role.Base is not IFpcRole fpcRole) continue;
+                if (targetPlayer.NetId != receiver.netId)
                 {
                     var isInvisible = asVisiblityControler && !visibilityController.ValidateVisibility(hub);
                     PlayerValidatedVisibilityEventArgs playerValidatedVisibilityEventArgs = new PlayerValidatedVisibilityEventArgs(receiver, hub, !isInvisible);
                     LabApi.Events.Handlers.PlayerEvents.OnValidatedVisibility(playerValidatedVisibilityEventArgs);
                     isInvisible = !playerValidatedVisibilityEventArgs.IsVisible;
-                    var newSyncData = GetSyncData(player, playerReceiver, fpcRole.FpcModule, isInvisible, out var canSee);
+                    var newSyncData = GetSyncData(playerReceiver, targetPlayer, fpcRole.FpcModule, isInvisible, out var canSee);
                     if (!isInvisible && canSee)
                     {
                         FpcServerPositionDistributor._bufferPlayerIDs[num] = hub.PlayerId;
