@@ -24,6 +24,8 @@ public class ToolForExiledPlugin : Plugin<ToolForExiledConfig, ToolForExiledTran
         private set; 
     }
 
+    public Harmony Harmony { get; private set; }
+
     #region Plugin Info
     public override string Author => PluginInfo.PLUGIN_AUTHORS;
     public override string Name => PluginInfo.PLUGIN_NAME;
@@ -35,6 +37,7 @@ public class ToolForExiledPlugin : Plugin<ToolForExiledConfig, ToolForExiledTran
     public ToolForExiledPlugin()
     {
         Instance = this;
+        Harmony = new Harmony(PluginInfo.PLUGIN_GUID);
     }
 
     public List<IRestable> Restables { get; } = [];
@@ -42,12 +45,15 @@ public class ToolForExiledPlugin : Plugin<ToolForExiledConfig, ToolForExiledTran
     public override void OnEnabled()
     {
         ServerEvents.WaitingForPlayers.Subscribe(Rest);
+        Harmony.DEBUG = Config.Debug;
+        Harmony.PatchAll();
         base.OnEnabled();
     }
 
     public override void OnDisabled()
     {
         ServerEvents.WaitingForPlayers.Unsubscribe(Rest);
+        Harmony.UnpatchAll(Harmony.Id);
         base.OnDisabled();
     }
 

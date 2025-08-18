@@ -4,7 +4,7 @@
 		<Title>ToolForExiled</Title>
 		<AssemblyName>$(Title)</AssemblyName>
 		<Product>Tool For Exiled</Product>
-		<Version>1.4.1</Version>
+		<Version>1.5.0</Version>
 		<RepositoryUrl>https://github.com/warquys/OneZeroPlugins</RepositoryUrl>
 
 		<Authors>VT</Authors>
@@ -13,14 +13,14 @@
 		<TargetFramework>net481</TargetFramework>
 		<Platforms>AnyCPU</Platforms>
 		<ImplicitUsings>disable</ImplicitUsings>
-		<LangVersion>latest</LangVersion>
+		<LangVersion>preview</LangVersion>
 		<DebugType>embedded</DebugType>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<Configurations>Debug;Release;UncomplicatedRoleSupported_Release;UncomplicatedRoleSupported_Debug;SoundSupported_Release;SoundSupported_Debug;UncomplicatedRoleAndSoundSupported_Release;UncomplicatedRoleAndSoundSupported_Debug</Configurations>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="ExMod.Exiled" Version="9.1.1" />
+	  <PackageReference Include="ExMod.Exiled" Version="9.8.1" />
 	  <PackageReference Include="Lib.Harmony" Version="2.2.2" />
 	</ItemGroup>
 

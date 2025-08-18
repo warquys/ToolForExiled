@@ -1,4 +1,4 @@
-﻿#if DEBUG || true
+﻿#if DEBUG
 using System.Xml.Linq;
 using CommandSystem;
 using PlayerRoles;
