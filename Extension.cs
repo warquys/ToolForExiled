@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Exiled.API.Extensions;
 using Exiled.Events.Features;
+using Mirror;
 using PlayerRoles;
 using PlayerRoles.Visibility;
 using ToolForExiled.Patch;
@@ -41,7 +43,25 @@ public static class Extension
         { 
             get => GetData(player).invisibilityFlags; 
             set => GetData(player).invisibilityFlags = value; 
-        }    
+        }
+
+
+        public void SendFakeEffectIntensity(EffectType effect, byte intensity = 1)
+            => SendNetworkMessage(player, MirrorService.GetCustomVarMessage(player.ReferenceHub.playerEffectsController, writer =>
+            {
+                var effectId = player.GetEffect(effect);
+                writer.WriteUInt(1); //Which SyncObject will be updated
+
+                //SyncList Specific
+                writer.WriteUInt(1); //The amount of changes
+                writer.WriteByte((byte)SyncList<byte>.Operation.OP_SET);
+                writer.WriteUInt((uint)effect); //effect id/index
+                writer.WriteByte(intensity); // Intensity
+            }, false));
+
+        public void SendNetworkMessage<TNetworkMessage>(TNetworkMessage msg, int channel = 0)
+                where TNetworkMessage : struct, NetworkMessage =>
+                player.Connection?.Send(msg, channel);
     }
 
     extension (PlayerEvents)

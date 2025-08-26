@@ -27,7 +27,9 @@
 	<ItemGroup>
 		<Reference Include="Assembly-CSharp-firstpass" HintPath="$(SL_REFERENCES)\Assembly-CSharp-firstpass.dll" />
 		<Reference Include="CommandSystem.Core" HintPath="$(SL_REFERENCES)\CommandSystem.Core.dll" />
-		<Reference Include="Mirror" HintPath="$(SL_REFERENCES)\Mirror.dll" />
+		<Reference Include="Mirror">
+		  <HintPath>..\..\EventTool\ref\Mirror_publicized.dll</HintPath>
+		</Reference>
 		<Reference Include="Pooling" HintPath="$(SL_REFERENCES)\Pooling.dll" />
 		<Reference Include="UnityEngine.PhysicsModule" HintPath="$(SL_REFERENCES)\UnityEngine.PhysicsModule.dll" />
 		<Reference Include="UnityEngine.PhysicsModule" HintPath="$(SL_REFERENCES)\UnityEngine.UI.dll" />
